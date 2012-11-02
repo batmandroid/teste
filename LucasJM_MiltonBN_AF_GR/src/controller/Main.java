@@ -11,6 +11,10 @@ public class Main {
 
 		view.setVisible(true);
 
+		System.out.println("Iniciando compilador!");
+		
+		Pato p = new Pato();
+		
 	}
 
 }

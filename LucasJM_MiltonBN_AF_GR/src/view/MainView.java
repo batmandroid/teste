@@ -17,7 +17,7 @@ public class MainView extends JFrame implements ActionListener {
 	JDialog aboutDialog;
 	
 	public MainView(){
-		super("Compilando maneiro");
+		super("Compilando maneiro djow");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		JPanel painel = new JPanel();
