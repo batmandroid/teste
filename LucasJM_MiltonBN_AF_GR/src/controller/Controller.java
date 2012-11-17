@@ -8,6 +8,13 @@ import model.Transicao;
 
 public class Controller {
 	
+	public Controller() {
+	} 
+	
+	public Automato determinizaAutomato(Automato automato){
+		return new Determinizador().determinizaAutomato(automato);
+	}
+	
 	public Automato minimizaAutomato(Automato automato){
 		return automato;
 	}

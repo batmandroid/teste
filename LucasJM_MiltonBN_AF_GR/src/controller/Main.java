@@ -40,6 +40,14 @@ public class Main {
 		
 		controller.validaSentenca(automato, sentenca);
 		
+		Automato novoAutomato = controller.determinizaAutomato(automato);
+		
+		if(automato.equals(novoAutomato)){
+			System.out.println("automato já determinizado");
+		} else {
+			System.out.println("Automato nao determinizado");
+		}
+		
 	}
 
 }
