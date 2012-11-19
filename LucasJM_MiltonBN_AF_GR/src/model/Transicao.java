@@ -1,11 +1,12 @@
 package model;
 
+import java.io.Serializable;
 
-public class Transicao {
 
-    // para facilitar o desenho dos simbolos da transição
-    // adotou-se aqui que uma transição pode ter n símbolos, o que no
-    // modelo real siginifica que essa transição representa n transições.
+public class Transicao implements Serializable {
+
+	private static final long serialVersionUID = -1470122755255511695L;
+
     private Character simbolo;
     private Estado estadoDestino;
     

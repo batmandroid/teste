@@ -1,13 +1,18 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Estado {
+public class Estado implements Serializable {
 	
-    private String nome;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1595232800234656840L;
+	private String nome;
     private boolean inicial;
     private boolean estFinal;
     private List<Transicao> transicoes;

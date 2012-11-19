@@ -1,10 +1,12 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Automato {
+public class Automato implements Serializable {
 
+	private static final long serialVersionUID = 4966556923674843702L;
 	private String nome;
 	private String descricao;
 	private List<Estado> estados;
@@ -14,6 +16,8 @@ public class Automato {
 		this.descricao = descricao;
 		estados = new ArrayList<Estado>();
 	}
+
+	public Automato() {}
 
 	public String getNome() {
 		return nome;
@@ -94,6 +98,7 @@ public class Automato {
 	public String toString() {
 		return "Automato [estados=" + estados + "]";
 	}
+	
 	
 	
 	
