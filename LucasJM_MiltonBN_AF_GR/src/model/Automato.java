@@ -12,7 +12,7 @@ public class Automato {
 	public Automato(String nome, String descricao) {
 		this.nome = nome;
 		this.descricao = descricao;
-		estados = new ArrayList<>();
+		estados = new ArrayList<Estado>();
 	}
 
 	public String getNome() {
