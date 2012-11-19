@@ -1,6 +1,5 @@
 package model;
 
-import java.util.TreeSet;
 
 public class Transicao {
 
@@ -50,24 +49,8 @@ public class Transicao {
     }
     
     @Override
-    public String toString() {
-        return "<html><font color=\"#0000CC\">Símbolo(s): " + /*geraStringSimbolos()*/  "</font>" +
-                " --- <font color=\"#CC0000\">Destino: " + estadoDestino.toString() + "</font></html>"; 
-    }
-
-//    public String geraStringSimbolos() {
-//
-//        StringBuilder sb = new StringBuilder();
-//        for ( Character c : simbolos ) {
-//            sb.append( c + ", " );
-//        }
-//
-//        if ( simbolos.size() == 0 ) {
-//            return "";
-//        } else {
-//            return sb.toString().substring( 0, sb.toString().length() - 2 );
-//        }
-//        
-//    }
+	public String toString() {
+		return "Transicao [simbolo=" + simbolo + ", estadoDestino=" + estadoDestino + "]";
+	}
 
 }

@@ -31,47 +31,34 @@ public class Determinizador {
 		}
 		
 		for (Estado estado : allEstados) {
-			
 			if(estado.isNaoDeterminismo()){
-				if(estadoNaoTradado(estado)){
-					Estado gerado = geraEstadoDeterministico(estado);
-					if(naoContemNaListaDeGerados()){
-						estadosGerados.add(gerado);
-					}
-				}
+				Estado gerado = geraEstadoDeterministico(estado);
+				estadosGerados.add(gerado);
 			} else{
-				if(estadoNaoTradado(estado)){
-					estadosGerados.add(estado);
-				}
+				estadosGerados.add(estado);
 			}
-			
-			while(recursividade.keySet().size() > 0){
-				Set<Estado> estadosSemTransicao = recursividade.keySet();
-				
-				for (Estado estadox : estadosSemTransicao) {
-					List<Estado> pseudoDestinos = recursividade.get(estadox);
-					geraTransicoesdeEstadosCriados(estadox, pseudoDestinos);
-				}
-			}
-
 		}
+		
+		boolean alldone = true;
+		while(alldone){	
+			alldone=false;
+			List<Estado> alldones = new ArrayList<Estado>();
+			alldones.addAll(estadosGerados);
+			for (Estado estadox : alldones) {
+				if(estadox.isNaoDeterminismo()){
+					Estado estadoy = geraEstadoDeterministico(estadox);
+					if(estadox.equals(estadoy)){
+						estadox.setTransicoes(estadoy.getTransicoes());
+					}
+					alldone = true;
+					break;
+				}
+			}
+		}
+		
+		determinizado.setEstados(estadosGerados);
+		
 		return determinizado;
-	}
-
-	private void geraTransicoesdeEstadosCriados(Estado estadox, List<Estado> pseudoDestinos) {
-		// TODO Auto-generated method stub
-		
-		// vamos fazer a mágica aqui
-		
-	}
-
-	private boolean naoContemNaListaDeGerados() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	private boolean estadoNaoTradado(Estado estado) {
-		return !estadosTratados.contains(estado);
 	}
 
 	private Estado geraEstadoDeterministico(final Estado estado) {
@@ -87,11 +74,20 @@ public class Determinizador {
 					transicoes.add(tx);
 				}
 			} else {
+				
 				List<Estado> destinos = estado.getDestinosBySimbolo(character);
-				Transicao ty = geraTransicaoBydestinos(character, destinos);
+				Estado gerado2 = geraTransicaoBydestinos(character, destinos);
+				
+				Transicao ty = null;
+				
+				if(transicaoInexistente(gerado2)){
+					estadosGerados.add(gerado2);
+					ty  = new Transicao(character, gerado2);
+				} else {
+					ty = new Transicao(character, estado);
+				}
 				transicoes.add(ty);
 			}
-			
 		}
 		
 		novoEstado.setTransicoes(transicoes);
@@ -102,13 +98,35 @@ public class Determinizador {
 		return novoEstado;
 	}
 
-	private Transicao geraTransicaoBydestinos(Character character, List<Estado> destinos) {
-		String nome = geraNomes(destinos);
-		boolean isFinal = verificaFinal(destinos);
-		Estado estadoDestino = new Estado(nome, false, isFinal);
-		recursividade.put(estadoDestino, destinos);
-		Transicao transicao = new Transicao(character, estadoDestino);
-		return transicao;
+	private boolean transicaoInexistente(Estado x) {
+
+		for (Estado estado : estadosGerados) {
+			if(estado.equals(x)){
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+	private Estado geraTransicaoBydestinos(Character character, List<Estado> estadoPai) {
+		
+		Estado estado = new Estado(geraNomes(estadoPai), false, verificaFinal(estadoPai));
+
+		List<Transicao> transicoes = new ArrayList<Transicao>();
+		
+		for (Estado pai : estadoPai) {
+			List<Transicao> tpai = pai.getTransicoes();
+			for (Transicao transicao : tpai) {
+				if(!transicoes.contains(transicao)){
+					transicoes.add(transicao);
+				}
+			}
+		}
+		
+		estado.setTransicoes(transicoes);
+		
+		return estado;
 	}
 	
 	private boolean verificaFinal(List<Estado> destinos) {
@@ -129,7 +147,7 @@ public class Determinizador {
 		for (Estado estado : destinos) {
 			nome=nome+estado.getNome(); 
 		}
-		return nome="]";
+		return nome = nome + "]";
 	}
 	
 	private boolean isAutomatoDeterministico(Automato automato) {

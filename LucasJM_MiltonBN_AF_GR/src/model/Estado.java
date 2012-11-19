@@ -100,6 +100,43 @@ public class Estado {
 		}
 		return null;
 	}
-	
 
+	@Override
+	public String toString() {
+		return "Estado [nome=" + nome + ", inicial=" + inicial + ", estFinal=" + estFinal +"]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (estFinal ? 1231 : 1237);
+		result = prime * result + (inicial ? 1231 : 1237);
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result
+				+ ((transicoes == null) ? 0 : transicoes.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Estado other = (Estado) obj;
+		if (estFinal != other.estFinal)
+			return false;
+		if (inicial != other.inicial)
+			return false;
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!nome.equals(other.nome))
+			return false;
+		return true;
+	}
+	
 }

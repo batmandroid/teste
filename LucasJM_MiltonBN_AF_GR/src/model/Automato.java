@@ -89,5 +89,12 @@ public class Automato {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Automato [estados=" + estados + "]";
+	}
+	
+	
 	
 }

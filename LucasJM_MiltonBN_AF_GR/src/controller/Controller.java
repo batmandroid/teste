@@ -26,7 +26,11 @@ public class Controller {
 		Estado estadoInicial = null;
 		// procura estado inicial e verifica se existe pelo menos um estado
 		// final
+		
+		System.out.println(estados.size());
+		
 		for (Estado e : estados) {
+			
 			if (e.isEstFinal()) {
 				isEstadoFinal = true;
 			}
@@ -39,6 +43,9 @@ public class Controller {
 		if (isEstadoFinal && estadoInicial != null) {
 
 			Estado estadoAtual = estadoInicial;
+			
+			System.out.println("INICIAL: " + estadoAtual + estadoAtual.getTransicoes().size());
+			
 			int simbolosReconhecidos = 0; // contador de símbolos reconhecidos
 
 			// a partir do estado inicial, começa a testar a string
@@ -46,6 +53,7 @@ public class Controller {
 				// boolean achou = false;
 				// percorre cada transição
 				for (Transicao t : estadoAtual.getTransicoes()) {
+					System.out.println(estadoAtual.getNome() + " " + estadoAtual.getTransicoes().size());
 					// se um dos símbolos da transição for igual ao caracter
 					// atual
 					if (t.getSimbolo().equals(Character.valueOf(s))) {
