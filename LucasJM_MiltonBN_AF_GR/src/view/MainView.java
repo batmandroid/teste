@@ -1,6 +1,5 @@
 package view;
 
-import gr.GRPanel;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -10,7 +9,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import af.AFPanel;
+import view.af.AFPanel;
+import view.gr.GRPanel;
+
 
 public class MainView extends JFrame implements ActionListener {
 

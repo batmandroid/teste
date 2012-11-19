@@ -1,30 +1,29 @@
-package af;
+package view.gr;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-public class AFTableModel extends AbstractTableModel {
+public class GRTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
 
 	List<List<Object>> itens;
 	List<String> colunas;
 
-	public AFTableModel() {
+	public GRTableModel() {
 		this.itens = new ArrayList<List<Object>>();
 		this.colunas = new ArrayList<String>();
+		colunas.add("");
 		colunas.add("->");
-		colunas.add("*");
-		colunas.add("Q");
+		colunas.add("");
 	}
 
-	 public void setValores(List<String> colunas, List<List<Object>> itens) {
-		 this.colunas = colunas;
-		 this.itens = itens;
-		 fireTableDataChanged();
-	 }
+	public void setItens(List<List<Object>> itens) {
+		this.itens = itens;
+		fireTableDataChanged();
+	}
 
 	public List<List<Object>> getItens() {
 		return itens;
@@ -61,41 +60,48 @@ public class AFTableModel extends AbstractTableModel {
 	}
 
 	public void setValueAt(Object value, int row, int col) {
-        List<Object> lin = itens.get(row);
-        lin.set(col, value);
-        fireTableDataChanged();
-    }
-	
+		List<Object> lin = itens.get(row);
+		lin.set(col, value);
+		fireTableCellUpdated(row, col);
+	}
+
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		if (columnIndex == 1) {
+			return false;
+		}
 		return true;
 	}
 
 	public void adicionarLinha() {
 		List<Object> list = new ArrayList<Object>();
-		list.add(new Boolean(false));
-		list.add(new Boolean(false));
-		for (int i = 2; i < colunas.size(); i++) {
-			list.add(" ");
+		for (int i = 0; i < colunas.size(); i++) {
+			if (i == 1) {
+				list.add("->");
+			} else {
+				list.add(" ");
+			}
 		}
 		itens.add(list);
 		fireTableDataChanged();
 	}
 
-	public void adicionarColuna(String valor) {
-		colunas.add(valor);
+	public void adicionarColuna() {
+		colunas.add("");
 		for (List<Object> linha : itens) {
 			linha.add("");
 		}
+		fireTableStructureChanged();
 	}
 
 	public void removerLinha(int linha) {
 		itens.remove(linha);
-		fireTableRowsDeleted(linha, linha);
+		fireTableDataChanged();
 	}
 
 	public void removerColuna(int coluna) {
 		colunas.remove(coluna);
+		fireTableStructureChanged();
 	}
 
 }

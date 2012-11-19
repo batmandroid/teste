@@ -1,4 +1,4 @@
-package af;
+package view.af;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -48,13 +48,7 @@ public class AFPanel extends JPanel implements ActionListener {
 		scrollPane = new JScrollPane(tabelaAF);
 		scrollPane.setPreferredSize(new Dimension(300, 150));
 		
-		TableColumn column = null;
-		for (int i = 0; i < tabelaAF.getColumnCount(); i++) {
-		    column = tabelaAF.getColumnModel().getColumn(i);
-		    if (i == 0 || i == 1) {
-		        column.setMaxWidth(20);
-		    }
-		}
+		ajustaTamanhoColunas();
 
 		adicionarLinhaBtn = new JButton("+ Linha");
 		adicionarLinhaBtn.addActionListener(this);
@@ -99,9 +93,7 @@ public class AFPanel extends JPanel implements ActionListener {
 			String input = JOptionPane.showInputDialog(null, "Digite o valor da nova coluna.");
 			if (!input.trim().equals("") && input.trim().matches("^([a-z]|[0-9])$")) {
 				modeloTabelaAF.adicionarColuna(input);
-				TableColumn tabCol = new TableColumn();
-				tabCol.setHeaderValue(input);
-				tabelaAF.addColumn(tabCol);
+				ajustaTamanhoColunas();
 			} else {
 				JOptionPane.showMessageDialog(null, "Símbolos terminais deve ser apenas 1 letra minúscula ou dígito.");
 			}
@@ -116,6 +108,7 @@ public class AFPanel extends JPanel implements ActionListener {
 				JOptionPane.showMessageDialog(null, "Essa coluna não pode ser deletada.");
 			} else if (col != -1) {
 				modeloTabelaAF.removerColuna(col);
+				ajustaTamanhoColunas();
 			}
 		} else if (e.getSource() == minimizarBtn) {
 
@@ -123,6 +116,16 @@ public class AFPanel extends JPanel implements ActionListener {
 
 		} else if (e.getSource() == gerarGRBtn) {
 
+		}
+	}
+
+	private void ajustaTamanhoColunas() {
+		TableColumn column = null;
+		for (int i = 0; i < tabelaAF.getColumnCount(); i++) {
+		    column = tabelaAF.getColumnModel().getColumn(i);
+		    if (i == 0 || i == 1) {
+		        column.setMaxWidth(20);
+		    }
 		}
 	}
 

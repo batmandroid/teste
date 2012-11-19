@@ -1,4 +1,4 @@
-package gr;
+package view.gr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -46,14 +46,8 @@ public class GRPanel extends JPanel implements ActionListener {
 		scrollPane = new JScrollPane(tabelaGR);
 		scrollPane.setPreferredSize(new Dimension(300, 150));
 
-		TableColumn column = null;
-		for (int i = 0; i < tabelaGR.getColumnCount(); i++) {
-		    column = tabelaGR.getColumnModel().getColumn(i);
-		    if (i == 1) {
-		        column.setMaxWidth(5);
-		    }
-		}
-		
+		ajustaTamanhoColunas();
+
 		adicionarLinhaBtn = new JButton("+ Linha");
 		adicionarLinhaBtn.addActionListener(this);
 		adicionarColunaBtn = new JButton("+ Coluna");
@@ -88,7 +82,8 @@ public class GRPanel extends JPanel implements ActionListener {
 		if (e.getSource() == adicionarLinhaBtn) {
 			modeloTabelaGR.adicionarLinha();
 		} else if (e.getSource() == adicionarColunaBtn) {
-			tabelaGR.addColumn(new TableColumn());
+			modeloTabelaGR.adicionarColuna();
+			ajustaTamanhoColunas();
 		} else if (e.getSource() == removerLinhaBtn) {
 			int lin = tabelaGR.getSelectedRow();
 			if (lin != -1) {
@@ -100,9 +95,20 @@ public class GRPanel extends JPanel implements ActionListener {
 				JOptionPane.showMessageDialog(null, "Essa coluna não pode ser deletada.");
 			} else if (col != -1) {
 				modeloTabelaGR.removerColuna(col);
+				ajustaTamanhoColunas();
 			}
 		} else if (e.getSource() == gerarAFBtn) {
 
+		}
+	}
+
+	private void ajustaTamanhoColunas() {
+		TableColumn column = null;
+		for (int i = 0; i < tabelaGR.getColumnCount(); i++) {
+			column = tabelaGR.getColumnModel().getColumn(i);
+			if (i == 1) {
+				column.setMaxWidth(5);
+			}
 		}
 	}
 
