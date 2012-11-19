@@ -9,23 +9,6 @@ import model.Transicao;
 
 public class Minimizador {
 
-//	// Se um estado inalcancavel leva para ele mesmo e trata como inalcancavel =/
-//	public List<Estado> getInalcancaveis(Automato e) {
-//		List<Estado> inalcancaveis = new ArrayList<Estado>(e.getEstados());
-//		List<Estado> alcancaveis = new ArrayList<Estado>();
-//
-//		for (Estado estado : inalcancaveis) {
-//			List<Transicao> transicoes = estado.getTransicoes();
-//			for (Transicao transicao : transicoes) {
-//				if (!alcancaveis.contains(transicao.getEstadoDestino())) {
-//					alcancaveis.add(estado);
-//				}
-//			}
-//		}
-//		inalcancaveis.removeAll(alcancaveis);
-//		return inalcancaveis;
-//	}
-
 	private List<Estado> getInalcancaveis(Automato e) {
 
 		List<Estado> alcancaveis = new ArrayList<Estado>();
@@ -80,13 +63,17 @@ public class Minimizador {
 					mortos.add(estado);
 				}
 			} else{
-				if(!estado.isEstFinal()  && (estado.getTransicoes().size() == 0 || isTransicaoNaoRecursiva(estado))){
+				if(!estado.isEstFinal()  && (estado.getTransicoes().size() == 0 || isTransicaoRecursiva(estado))){
 					mortos.add(estado);
 				}
 			}
 		}
 		
 		return mortos;
+	}
+
+	private Automato removeEstadosEsquivalentes(Automato e) {
+		return e;
 	}
 	
 	public Automato removeEstadosMortos(Automato e){
@@ -113,14 +100,23 @@ public class Minimizador {
 		return e;
 	}
 
-	private boolean isTransicaoNaoRecursiva(Estado estado) {
+	private boolean isTransicaoRecursiva(Estado estado) {
 		List<Transicao> transicoes = estado.getTransicoes();
 		for (Transicao transicao : transicoes) {
 			if(!transicao.getEstadoDestino().equals(estado)){
-				return true;
+				return false;
 			}
 		}
-		return false;
+		return true;
+	}
+
+	public Automato minimizaAutomto(Automato automato) {
+		
+		Automato naoInalcancaveis = removeInalcancaveis(automato);
+		Automato naoMortos = removeEstadosMortos(naoInalcancaveis);
+		Automato naoEquivalentes = removeEstadosEsquivalentes(naoMortos);
+		
+		return naoEquivalentes;
 	}
 	
 }

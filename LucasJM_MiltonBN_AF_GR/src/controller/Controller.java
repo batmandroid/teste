@@ -19,7 +19,7 @@ public class Controller {
 	}
 	
 	public Automato minimizaAutomato(Automato automato){
-		return automato;
+		return new Minimizador().minimizaAutomto(automato);
 	}
 	
 	public boolean validaSentenca(Automato automato, List<Character> sentenca) {
