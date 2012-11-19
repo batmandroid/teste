@@ -1,9 +1,7 @@
 package view;
 
-
 public enum MenuOption {
 
-	ABOUT,
-    EXIT;
+	ABOUT, EXIT, CRIAR_AF, CRIAR_GR;
 
 }

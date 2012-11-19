@@ -15,7 +15,21 @@ public class MenuBar extends JMenuBar {
 		JMenuItem item;
 
 		menu = new JMenu("Arquivo");
-		item = new JMenuItem("Carregar");
+		item = new JMenuItem("Carregar AF");
+		item.addActionListener(view);
+		menu.add(item);
+		item = new JMenuItem("Carregar GR");
+		item.addActionListener(view);
+		menu.add(item);
+		add(menu);
+
+		menu = new JMenu("Criar");
+		item = new JMenuItem("Autômato Finito");
+		item.setActionCommand(MenuOption.CRIAR_AF.name());
+		item.addActionListener(view);
+		menu.add(item);
+		item = new JMenuItem("Gramática Regular");
+		item.setActionCommand(MenuOption.CRIAR_GR.name());
 		item.addActionListener(view);
 		menu.add(item);
 		add(menu);
