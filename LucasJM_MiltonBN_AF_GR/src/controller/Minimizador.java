@@ -75,12 +75,31 @@ public class Minimizador {
 		List<Estado> allEstado = automato.getEstados();
 		
 		for (Estado estado : allEstado) {
-			if(!estado.isEstFinal() && estado.getTransicoes() == null || estado.getTransicoes().size() == 0){
-				
+			if(estado.getTransicoes() == null){
+				if(!estado.isEstFinal()){
+					mortos.add(estado);
+				}
+			} else{
+				if(!estado.isEstFinal()  && (estado.getTransicoes().size() == 0 || isTransicaoNaoRecursiva(estado))){
+					
+				}
 			}
 		}
 		
 		return mortos;
+	}
+
+	private boolean isTransicaoNaoRecursiva(Estado estado) {
+
+		List<Transicao> transicoes = estado.getTransicoes();
+		
+		for (Transicao transicao : transicoes) {
+			if(!transicao.getEstadoDestino().equals(estado)){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 }
