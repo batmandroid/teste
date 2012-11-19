@@ -84,8 +84,9 @@ public class Determinizador {
 					estadosGerados.add(gerado2);
 					ty  = new Transicao(character, gerado2);
 				} else {
-					ty = new Transicao(character, estado);
+					ty = new Transicao(character, getTransicaoIgual(gerado2));
 				}
+				
 				transicoes.add(ty);
 			}
 		}
@@ -96,6 +97,15 @@ public class Determinizador {
 		novoEstado.setInicial(estado.isInicial());
 		
 		return novoEstado;
+	}
+
+	private Estado getTransicaoIgual(Estado gerado2) {
+		for (Estado estado : estadosGerados) {
+			if(estado.equals(gerado2)){
+				return estado;
+			}
+		}
+		return gerado2;
 	}
 
 	private boolean transicaoInexistente(Estado x) {
