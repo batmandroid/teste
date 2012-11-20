@@ -56,13 +56,13 @@ public class GRPanel extends JPanel implements ActionListener {
 
 		ajustaTamanhoColunas();
 
-		adicionarLinhaBtn = new JButton("+ Linha");
+		adicionarLinhaBtn = new JButton("+ Lin");
 		adicionarLinhaBtn.addActionListener(this);
-		adicionarColunaBtn = new JButton("+ Coluna");
+		adicionarColunaBtn = new JButton("+ Col");
 		adicionarColunaBtn.addActionListener(this);
-		removerLinhaBtn = new JButton("- Linha");
+		removerLinhaBtn = new JButton("- Lin");
 		removerLinhaBtn.addActionListener(this);
-		removerColunaBtn = new JButton("- Coluna");
+		removerColunaBtn = new JButton("- Col");
 		removerColunaBtn.addActionListener(this);
 		gerarAFBtn = new JButton("Gerar AF");
 		gerarAFBtn.addActionListener(this);

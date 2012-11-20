@@ -13,8 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
 import model.Automato;
-import model.Estado;
-import model.Transicao;
 
 public class Persistencia {
 

@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import model.Automato;
+import model.Estado;
+import model.Transicao;
 import util.OperacoesConstantes;
 import view.af.AFPanel;
 import view.gr.GRPanel;
@@ -48,19 +50,30 @@ public class MainView extends JFrame implements ActionListener {
 		case CRIAR_AF:
 			principalPanel.removeAll();
 			principalPanel.add(new AFPanel(controller, this, OperacoesConstantes.NOVO));
+			repaint();
 			pack();
 			break;
 		case CRIAR_GR:
 			principalPanel.removeAll();
 			principalPanel.add(new GRPanel(controller, this));
+			repaint();
 			pack();
 			break;
 		case CARREGAR_AF:
 			principalPanel.removeAll();
 			AFPanel afp = new AFPanel(controller, this, OperacoesConstantes.NOVO);
-			afp.setAutomato(controller.getPersistencia().carregar(principalPanel));
+			Automato automato = controller.getPersistencia().carregar(principalPanel);
+			
+			for (Estado estado : automato.getEstados()) {
+				for (Transicao transicao : estado.getTransicoes()) {
+					System.out.println(transicao.getEstadoDestino().getNome());
+				}
+			}
+			
+			afp.setAutomato(automato);
 			principalPanel.add(afp);
 			repaint();
+			pack();
 			break;
 		case ABOUT:
 			aboutDialog = new AboutDialog(this);
@@ -68,7 +81,7 @@ public class MainView extends JFrame implements ActionListener {
 		}
 	}
 
-	public void gerarAutomato(Automato automatoDet) {
+	public void gerarAutomatoDeterminizado(Automato automatoDet) {
 		AFPanel afp = new AFPanel(controller, this, OperacoesConstantes.DETERMINIZACAO, automatoDet.getNome());
 		afp.setAutomato(automatoDet);
 		principalPanel.add(afp);
@@ -78,6 +91,13 @@ public class MainView extends JFrame implements ActionListener {
 	public void removePanel(JPanel panel) {
 		principalPanel.remove(panel);
 		repaint();
+	}
+
+	public void gerarAutomatoMinimizado(Automato automatoMin) {
+		AFPanel afp = new AFPanel(controller, this, OperacoesConstantes.MINIMIZACAO, automatoMin.getNome());
+		afp.setAutomato(automatoMin);
+		principalPanel.add(afp);
+		pack();		
 	}
 
 }

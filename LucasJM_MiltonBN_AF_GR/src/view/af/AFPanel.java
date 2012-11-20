@@ -74,7 +74,9 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		if (operacao.equals(OperacoesConstantes.NOVO)) {
 			this.setBorder(BorderFactory.createTitledBorder("Autômato Finito"));
 		} else if (operacao.equals(OperacoesConstantes.DETERMINIZACAO)) {
-			this.setBorder(BorderFactory.createTitledBorder("Autômato Finito determinizado do AF " + nomePai));
+			this.setBorder(BorderFactory.createTitledBorder("AF determinizado do AF " + nomePai));
+		} else if (operacao.equals(OperacoesConstantes.MINIMIZACAO)) {
+			this.setBorder(BorderFactory.createTitledBorder("AF minimizado do AF " + nomePai));
 		}
 
 	}
@@ -95,16 +97,17 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		ajustaTamanhoColunas();
 
 		nomeLabel = new JLabel("Nome");
-		nomeText = new JTextField(25);
+		nomeText = new JTextField(20);
 		fecharBtn = new JButton(new ImageIcon("src/image/close.png", "Fechar"));
 		fecharBtn.addActionListener(this);
-		adicionarLinhaBtn = new JButton("+ Linha");
+		fecharBtn.setPreferredSize(new Dimension(16, 16));
+		adicionarLinhaBtn = new JButton("+ Lin");
 		adicionarLinhaBtn.addActionListener(this);
-		adicionarColunaBtn = new JButton("+ Coluna");
+		adicionarColunaBtn = new JButton("+ Col");
 		adicionarColunaBtn.addActionListener(this);
-		removerLinhaBtn = new JButton("- Linha");
+		removerLinhaBtn = new JButton("- Lin");
 		removerLinhaBtn.addActionListener(this);
-		removerColunaBtn = new JButton("- Coluna");
+		removerColunaBtn = new JButton("- Col");
 		removerColunaBtn.addActionListener(this);
 
 		criaMenuOperacoes();
@@ -142,12 +145,12 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	}
 
 	private void posicioneComponentes() {
-		operacoesTabelaPanel.add(fecharBtn);
 		operacoesTabelaPanel.add(adicionarLinhaBtn);
 		operacoesTabelaPanel.add(adicionarColunaBtn);
 		operacoesTabelaPanel.add(removerLinhaBtn);
 		operacoesTabelaPanel.add(removerColunaBtn);
 		operacoesAFPanel.add(menuOperacoes);
+		nomePanel.add(fecharBtn);
 		nomePanel.add(nomeLabel);
 		nomePanel.add(nomeText);
 
@@ -189,7 +192,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 				ajustaTamanhoColunas();
 			}
 		} else if (e.getSource() == minimizarItem) {
-
+			minimizarAutomato();
 		} else if (e.getSource() == determinizarItem) {
 			determinizarAutomato();
 		} else if (e.getSource() == gerarGRItem) {
@@ -203,7 +206,12 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 
 	private void determinizarAutomato() {
 		Automato automato = geraAutomatoDaTabela();
-		mainView.gerarAutomato(controller.determinizaAutomato(automato));
+		mainView.gerarAutomatoDeterminizado(controller.determinizaAutomato(automato));
+	}
+
+	private void minimizarAutomato() {
+		Automato automato = geraAutomatoDaTabela();
+		mainView.gerarAutomatoMinimizado(controller.minimizaAutomato(automato));
 	}
 
 	private Automato geraAutomatoDaTabela() {
@@ -219,29 +227,9 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		for (int j = 0; j < modeloTabelaAF.getItens().size(); j++) {
 			List<Transicao> transicoes = new ArrayList<Transicao>();
 			for (int i = 3; i < modeloTabelaAF.getColunas().size(); i++) {
-				List<String> transicoesSeparadas = new ArrayList<String>();
-				String trans = ((String) modeloTabelaAF.getItens().get(j).get(i)).trim();
-				String newTrans = "";
-				if (trans.charAt(0) == '[' && trans.charAt(trans.length() - 1) == ']') {
-					newTrans = trans.substring(1, trans.length() - 1).trim();
-					transicoesSeparadas.add(newTrans);
-				} else {
-					for (int k = 0; k < trans.length(); k++) {
-						if (trans.charAt(k) == 'q') {
-							newTrans = String.valueOf(trans.charAt(k));
-						} else if (Character.isDigit(trans.charAt(k)) && k < trans.length() - 1 && Character.isDigit(trans.charAt(k + 1))) {
-							newTrans += String.valueOf(trans.charAt(k));
-						} else if (Character.isDigit(trans.charAt(k)) && k < trans.length() - 1 && !Character.isDigit(trans.charAt(k + 1))) {
-							newTrans += String.valueOf(trans.charAt(k));
-							transicoesSeparadas.add(newTrans);
-						} else if (Character.isDigit(trans.charAt(k)) && k == trans.length() - 1) {
-							newTrans += String.valueOf(trans.charAt(k));
-							transicoesSeparadas.add(newTrans);
-						}
-					}
-				}
-				for (int h = 0; h < transicoesSeparadas.size(); h++) {
-					Transicao transicao = new Transicao(modeloTabelaAF.getColunas().get(i).trim().charAt(0), estados.get(transicoesSeparadas.get(h)
+				String[] transicoesSeparadas = ((String) modeloTabelaAF.getItens().get(j).get(i)).trim().split(",");
+				for (int h = 0; h < transicoesSeparadas.length; h++) {
+					Transicao transicao = new Transicao(modeloTabelaAF.getColunas().get(i).trim().charAt(0), estados.get(transicoesSeparadas[h]
 							.trim()));
 					transicoes.add(transicao);
 				}
@@ -284,6 +272,15 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	private void validaEntrada(int row, int col) {
 		switch (col) {
 		case 0:
+			Boolean inicia = (Boolean) tabelaAF.getValueAt(row, col);
+			if (inicia) {
+				for (int i = 0; i < modeloTabelaAF.getItens().size(); i++) {
+					if (((Boolean) modeloTabelaAF.getItens().get(i).get(0)) && row != i) {
+						JOptionPane.showMessageDialog(null, "Apenas um estado pode ser inicial.");
+						tabelaAF.setValueAt(false, row, col);
+					}
+				}
+			}
 			break;
 		case 1:
 			break;
@@ -291,8 +288,8 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			String typed = (String) tabelaAF.getValueAt(row, col);
 			typed = typed.trim();
 
-			if (!typed.equals("") && !typed.matches("^\\[(q)[0-9]+((q)[0-9]+)*\\]|(q)[0-9]+((q)[0-9]+)*$")) {
-				JOptionPane.showMessageDialog(null, "O valor deve ser 'q_' ou 'q_q_...', com ou sem [ ]");
+			if (!typed.equals("") && !typed.matches("^(q)[0-9]+(,(q)[0-9]+)*$")) {
+				JOptionPane.showMessageDialog(null, "O valor deve ser 'q_', 'q_q_...' ou q_,q_...");
 				tabelaAF.setValueAt(" ", row, col);
 			}
 			break;
@@ -311,6 +308,9 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			linha.add(estado.getNome());
 			String trans = "";
 			for (Transicao transicao : estado.getTransicoes()) {
+				if(!trans.equals("")){
+					trans += ",";
+				}
 				trans += transicao.getEstadoDestino().getNome();
 				colunas.add(transicao.getSimbolo().toString());
 			}
