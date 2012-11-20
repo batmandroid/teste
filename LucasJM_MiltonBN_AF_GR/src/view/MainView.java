@@ -13,6 +13,7 @@ import model.Automato;
 
 import controller.Controller;
 
+import util.OperacoesConstantes;
 import view.af.AFPanel;
 import view.gr.GRPanel;
 
@@ -50,12 +51,19 @@ public class MainView extends JFrame implements ActionListener {
 			System.exit(0);
 		case CRIAR_AF:
 			principalPanel.removeAll();
-			principalPanel.add(new AFPanel(controller, this));
+			principalPanel.add(new AFPanel(controller, this, OperacoesConstantes.NOVO));
 			pack();
 			break;
 		case CRIAR_GR:
 			principalPanel.removeAll();
 			principalPanel.add(new GRPanel(controller, this));
+			pack();
+			break;
+		case CARREGAR_AF:
+			principalPanel.removeAll();
+			AFPanel afp = new AFPanel(controller, this, OperacoesConstantes.NOVO);
+			afp.setAutomato(controller.getPersistencia().carregar(principalPanel));
+			principalPanel.add(afp);
 			pack();
 			break;
 		case ABOUT:
@@ -65,7 +73,7 @@ public class MainView extends JFrame implements ActionListener {
 	}
 
 	public void gerarAutomato(Automato automatoDet) {
-		AFPanel afp = new AFPanel(controller, this);
+		AFPanel afp = new AFPanel(controller, this, OperacoesConstantes.DETERMINIZACAO, automatoDet.getNome());
 		afp.setAutomato(automatoDet);
 		principalPanel.add(afp);
 		pack();

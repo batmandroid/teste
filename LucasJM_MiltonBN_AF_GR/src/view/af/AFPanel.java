@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -13,10 +14,12 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -25,6 +28,7 @@ import javax.swing.table.TableColumn;
 import model.Automato;
 import model.Estado;
 import model.Transicao;
+import util.OperacoesConstantes;
 import view.MainView;
 import controller.Controller;
 
@@ -34,6 +38,8 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 
 	Controller controller;
 	MainView mainView;
+	JLabel nomeLabel;
+	JTextField nomeText;
 	JButton adicionarLinhaBtn;
 	JButton adicionarColunaBtn;
 	JButton removerLinhaBtn;
@@ -41,13 +47,16 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	JButton determinizarBtn;
 	JButton minimizarBtn;
 	JButton gerarGRBtn;
+	JButton salvarBtn;
 	JPanel operacoesTabelaPanel;
 	JPanel operacoesAFPanel;
+	JPanel topoPanel;
+	JPanel nomePanel;
 	JScrollPane scrollPanel;
 	JTable tabelaAF;
 	AFTableModel modeloTabelaAF;
 
-	public AFPanel(Controller controller, MainView mainView) {
+	public AFPanel(Controller controller, MainView mainView, String operacao, String nomePai) {
 		this.controller = controller;
 		this.mainView = mainView;
 		modeloTabelaAF = new AFTableModel();
@@ -55,7 +64,16 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		definaComponentes();
 		posicioneComponentes();
 
-		this.setBorder(BorderFactory.createTitledBorder("Autômato Finito"));
+		if (operacao.equals(OperacoesConstantes.NOVO)) {
+			this.setBorder(BorderFactory.createTitledBorder("Autômato Finito"));
+		} else if (operacao.equals(OperacoesConstantes.DETERMINIZACAO)) {
+			this.setBorder(BorderFactory.createTitledBorder("Autômato Finito determinizado do AF " + nomePai));
+		}
+
+	}
+
+	public AFPanel(Controller controller, MainView mainView, String operacao) {
+		this(controller, mainView, operacao, "");
 	}
 
 	private void definaComponentes() {
@@ -69,6 +87,8 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 
 		ajustaTamanhoColunas();
 
+		nomeLabel = new JLabel("Nome");
+		nomeText = new JTextField(25);
 		adicionarLinhaBtn = new JButton("+ Linha");
 		adicionarLinhaBtn.addActionListener(this);
 		adicionarColunaBtn = new JButton("+ Coluna");
@@ -83,9 +103,13 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		determinizarBtn.addActionListener(this);
 		gerarGRBtn = new JButton("Gerar GR");
 		gerarGRBtn.addActionListener(this);
+		salvarBtn = new JButton("Salvar");
+		salvarBtn.addActionListener(this);
 
 		operacoesAFPanel = new JPanel();
 		operacoesTabelaPanel = new JPanel();
+		nomePanel = new JPanel();
+		topoPanel = new JPanel(new BorderLayout());
 	}
 
 	private void posicioneComponentes() {
@@ -96,9 +120,15 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		operacoesAFPanel.add(minimizarBtn);
 		operacoesAFPanel.add(determinizarBtn);
 		operacoesAFPanel.add(gerarGRBtn);
+		operacoesAFPanel.add(salvarBtn);
+		nomePanel.add(nomeLabel);
+		nomePanel.add(nomeText);
+
+		topoPanel.add(nomePanel, BorderLayout.NORTH);
+		topoPanel.add(operacoesTabelaPanel, BorderLayout.SOUTH);
 
 		this.setLayout(new BorderLayout());
-		this.add("North", operacoesTabelaPanel);
+		this.add("North", topoPanel);
 		this.add("Center", scrollPanel);
 		this.add("South", operacoesAFPanel);
 
@@ -137,11 +167,18 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			determinizarAutomato();
 		} else if (e.getSource() == gerarGRBtn) {
 
+		} else if (e.getSource() == salvarBtn) {
+			controller.getPersistencia().salvarComo(this, geraAutomatoDaTabela());
 		}
 	}
 
 	private void determinizarAutomato() {
-		Automato automato = new Automato("", "");
+		Automato automato = geraAutomatoDaTabela();
+		mainView.gerarAutomato(controller.determinizaAutomato(automato));
+	}
+
+	private Automato geraAutomatoDaTabela() {
+		Automato automato = new Automato(nomeText.getText(), "");
 
 		Map<String, Estado> estados = new LinkedHashMap<String, Estado>();
 
@@ -153,9 +190,25 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		for (int j = 0; j < modeloTabelaAF.getItens().size(); j++) {
 			List<Transicao> transicoes = new ArrayList<Transicao>();
 			for (int i = 3; i < modeloTabelaAF.getColunas().size(); i++) {
-				String[] transicoesSeparadas = ((String) modeloTabelaAF.getItens().get(j).get(i)).trim().split(",");
-				for (int h = 0; h < transicoesSeparadas.length; h++) {
-					Transicao transicao = new Transicao(modeloTabelaAF.getColunas().get(i).trim().charAt(0), estados.get(transicoesSeparadas[h].trim()));
+				List<String> transicoesSeparadas = new ArrayList<String>();
+				String trans = ((String) modeloTabelaAF.getItens().get(j).get(i)).trim();
+				String newTrans = "";
+				for (int k = 0; k < trans.length(); k++) {
+					if (trans.charAt(k) == 'q') {
+						newTrans = String.valueOf(trans.charAt(k));
+					} else if (Character.isDigit(trans.charAt(k)) && k < trans.length() - 1 && Character.isDigit(trans.charAt(k + 1))) {
+						newTrans += String.valueOf(trans.charAt(k));
+					} else if (Character.isDigit(trans.charAt(k)) && k < trans.length() - 1 && !Character.isDigit(trans.charAt(k + 1))) {
+						newTrans += String.valueOf(trans.charAt(k));
+						transicoesSeparadas.add(newTrans);
+					} else if (Character.isDigit(trans.charAt(k)) && k == trans.length() - 1) {
+						newTrans += String.valueOf(trans.charAt(k));
+						transicoesSeparadas.add(newTrans);
+					}
+				}
+				for (int h = 0; h < transicoesSeparadas.size(); h++) {
+					Transicao transicao = new Transicao(modeloTabelaAF.getColunas().get(i).trim().charAt(0), estados.get(transicoesSeparadas.get(h)
+							.trim()));
 					transicoes.add(transicao);
 				}
 			}
@@ -167,8 +220,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			estadosLista.add(estado);
 		}
 		automato.setEstados(estadosLista);
-
-		mainView.gerarAutomato(controller.determinizaAutomato(automato));
+		return automato;
 	}
 
 	private void ajustaTamanhoColunas() {
@@ -205,8 +257,8 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			String typed = (String) tabelaAF.getValueAt(row, col);
 			typed = typed.trim();
 
-			if (!typed.equals("") && !typed.matches("^\\[(q)[0-9]+(,(q)[0-9]+)*\\]|(q)[0-9]+(,(q)[0-9]+)*$")) {
-				JOptionPane.showMessageDialog(null, "O valor deve ser 'q_' ou 'q_,q_,...', com ou sem [ ]");
+			if (!typed.equals("") && !typed.matches("^\\[(q)[0-9]+((q)[0-9]+)*\\]|(q)[0-9]+((q)[0-9]+)*$")) {
+				JOptionPane.showMessageDialog(null, "O valor deve ser 'q_' ou 'q_q_...', com ou sem [ ]");
 				tabelaAF.setValueAt(" ", row, col);
 			}
 			break;
@@ -214,43 +266,26 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	}
 
 	public void setAutomato(Automato automato) {
-		System.out.println(automato);
-		for (Estado estado : automato.getEstados()) {
-			for (Transicao transicao : estado.getTransicoes()) {
-				System.out.println(transicao.toString());
-			}
-		}
-		
+		nomeText.setText(automato.getNome());
 		Set<String> colunas = new HashSet<String>();
 		List<List<Object>> itens = new ArrayList<List<Object>>();
-		
+
 		for (Estado estado : automato.getEstados()) {
 			List<Object> linha = new ArrayList<Object>();
 			linha.add(estado.isInicial());
 			linha.add(estado.isEstFinal());
-			linha.add(ajustaNomeDoEstado(estado.getNome()));
+			linha.add(estado.getNome());
+			String trans = "";
 			for (Transicao transicao : estado.getTransicoes()) {
-				linha.add(ajustaNomeDoEstado(transicao.getEstadoDestino().getNome()));
+				trans += transicao.getEstadoDestino().getNome();
 				colunas.add(transicao.getSimbolo().toString());
 			}
+			linha.add(trans);
 			itens.add(linha);
 		}
 		modeloTabelaAF.setItens(itens);
 		modeloTabelaAF.addColunas(colunas);
 		ajustaTamanhoColunas();
-	}
-
-	private String ajustaNomeDoEstado(String nome) {
-		String nomeFormatado = "";
-		for (int i = 0; i < nome.length(); i++) {
-			if(i != 0 && nome.charAt(i - 1) != '[' && nome.charAt(i) == 'q'){
-				nomeFormatado += ",";
-				nomeFormatado += nome.charAt(i);
-			} else{
-				nomeFormatado += nome.charAt(i);
-			}
-		}
-		return nomeFormatado;
 	}
 
 }

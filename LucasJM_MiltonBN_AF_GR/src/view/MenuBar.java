@@ -16,6 +16,7 @@ public class MenuBar extends JMenuBar {
 
 		menu = new JMenu("Arquivo");
 		item = new JMenuItem("Carregar AF");
+		item.setActionCommand(MenuOption.CARREGAR_AF.name());
 		item.addActionListener(view);
 		menu.add(item);
 		item = new JMenuItem("Carregar GR");

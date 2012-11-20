@@ -8,7 +8,10 @@ import model.Transicao;
 
 public class Controller {
 	
+	Persistencia persistencia;
+	
 	public Controller() {
+		persistencia = new Persistencia();
 	} 
 	
 	public Automato determinizaAutomato(Automato automato){
@@ -72,6 +75,10 @@ public class Controller {
 	        } 
 		}
 		return false;
+	}
+	
+	public Persistencia getPersistencia() {
+		return persistencia;
 	}
 
 }

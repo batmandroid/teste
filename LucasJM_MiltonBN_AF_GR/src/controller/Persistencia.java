@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
 import model.Automato;
+import model.Estado;
+import model.Transicao;
 
 public class Persistencia {
 
@@ -43,9 +45,9 @@ public class Persistencia {
 		return new Automato();
 	}
 
-	public Automato carregar(JPanel panel, File caminho) {
-		caminho = new File(".");
-		JFileChooser fc = new JFileChooser(caminho.getAbsolutePath() + "/src/exemplos");
+	public Automato carregar(JPanel panel) {
+		File caminho = new File(".");
+		JFileChooser fc = new JFileChooser(caminho.getAbsolutePath() + "/src/arquivos");
 		fc.addChoosableFileFilter(new FileFilter() {
 
 			@Override
@@ -82,7 +84,7 @@ public class Persistencia {
 
 	public void salvar(JPanel panel, File caminho, Automato automato) {
 		if (caminho == null)
-			salvarComo(panel, caminho, automato);
+			salvarComo(panel, automato);
 		else
 			try {
 				escreverObjeto(caminho, automato);
@@ -93,9 +95,9 @@ public class Persistencia {
 			}
 	}
 
-	public void salvarComo(JPanel panel, File caminho, Automato automato) {
-		caminho = new File(".");
-		JFileChooser fc = new JFileChooser(caminho.getAbsolutePath() + "/src/exemplos");
+	public void salvarComo(JPanel panel, Automato automato) {
+		File caminho = new File(".");
+		JFileChooser fc = new JFileChooser(caminho.getAbsolutePath() + "/src/arquivos");
 
 		fc.addChoosableFileFilter(new FileFilter() {
 
