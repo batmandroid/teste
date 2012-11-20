@@ -192,15 +192,44 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 				ajustaTamanhoColunas();
 			}
 		} else if (e.getSource() == minimizarItem) {
-			minimizarAutomato();
+			if (validaTabela()) {
+				minimizarAutomato();
+			}
 		} else if (e.getSource() == determinizarItem) {
-			determinizarAutomato();
+			if (validaTabela()) {
+				determinizarAutomato();
+			}
 		} else if (e.getSource() == gerarGRItem) {
 
 		} else if (e.getSource() == salvarItem) {
 			controller.getPersistencia().salvarComo(this, geraAutomatoDaTabela());
 		} else if (e.getSource() == fecharBtn) {
 			mainView.removePanel(this);
+		}
+	}
+
+	private boolean validaTabela() {
+		int inicios = 0;
+		int finais = 0;
+		for (int i = 0; i < modeloTabelaAF.getItens().size(); i++) {
+			if (((Boolean) modeloTabelaAF.getItens().get(i).get(0))) {
+				inicios++;
+			}
+			if (((Boolean) modeloTabelaAF.getItens().get(i).get(1))) {
+				finais++;
+			}
+		}
+		if (inicios != 1 && finais == 0) {
+			JOptionPane.showMessageDialog(null, "Deve haver apenas 1 estado inicial e no mínimo 1 estado final.");
+			return false;
+		} else if (inicios != 1 && finais != 0) {
+			JOptionPane.showMessageDialog(null, "Deve haver apenas 1 estado inicial.");
+			return false;
+		} else if (inicios == 1 && finais == 0) {
+			JOptionPane.showMessageDialog(null, "Deve haver no mínimo 1 estado final.");
+			return false;
+		} else {
+			return true;
 		}
 	}
 
@@ -272,15 +301,6 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	private void validaEntrada(int row, int col) {
 		switch (col) {
 		case 0:
-			Boolean inicia = (Boolean) tabelaAF.getValueAt(row, col);
-			if (inicia) {
-				for (int i = 0; i < modeloTabelaAF.getItens().size(); i++) {
-					if (((Boolean) modeloTabelaAF.getItens().get(i).get(0)) && row != i) {
-						JOptionPane.showMessageDialog(null, "Apenas um estado pode ser inicial.");
-						tabelaAF.setValueAt(false, row, col);
-					}
-				}
-			}
 			break;
 		case 1:
 			break;
@@ -308,7 +328,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			linha.add(estado.getNome());
 			String trans = "";
 			for (Transicao transicao : estado.getTransicoes()) {
-				if(!trans.equals("")){
+				if (!trans.equals("")) {
 					trans += ",";
 				}
 				trans += transicao.getEstadoDestino().getNome();

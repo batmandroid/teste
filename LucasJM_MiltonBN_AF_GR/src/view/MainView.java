@@ -78,6 +78,8 @@ public class MainView extends JFrame implements ActionListener {
 		case ABOUT:
 			aboutDialog = new AboutDialog(this);
 			break;
+		default:
+			break;
 		}
 	}
 
