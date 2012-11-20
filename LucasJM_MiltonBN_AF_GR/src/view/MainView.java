@@ -1,6 +1,5 @@
 package view;
 
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,13 +9,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import model.Automato;
-
-import controller.Controller;
-
 import util.OperacoesConstantes;
 import view.af.AFPanel;
 import view.gr.GRPanel;
-
+import controller.Controller;
 
 public class MainView extends JFrame implements ActionListener {
 
@@ -25,7 +21,7 @@ public class MainView extends JFrame implements ActionListener {
 	JDialog aboutDialog;
 	JPanel principalPanel;
 	Controller controller;
-	
+
 	public MainView(Controller controller) {
 		super("Lucas Just Meller - Milton Bittencourt");
 		this.controller = controller;
@@ -64,7 +60,7 @@ public class MainView extends JFrame implements ActionListener {
 			AFPanel afp = new AFPanel(controller, this, OperacoesConstantes.NOVO);
 			afp.setAutomato(controller.getPersistencia().carregar(principalPanel));
 			principalPanel.add(afp);
-			pack();
+			repaint();
 			break;
 		case ABOUT:
 			aboutDialog = new AboutDialog(this);
@@ -77,6 +73,11 @@ public class MainView extends JFrame implements ActionListener {
 		afp.setAutomato(automatoDet);
 		principalPanel.add(afp);
 		pack();
+	}
+
+	public void removePanel(JPanel panel) {
+		principalPanel.remove(panel);
+		repaint();
 	}
 
 }

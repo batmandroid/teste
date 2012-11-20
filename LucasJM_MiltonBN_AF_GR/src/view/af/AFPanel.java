@@ -1,10 +1,10 @@
 package view.af;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -13,8 +13,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,6 +34,7 @@ import model.Estado;
 import model.Transicao;
 import util.OperacoesConstantes;
 import view.MainView;
+import view.MenuOption;
 import controller.Controller;
 
 public class AFPanel extends JPanel implements ActionListener, TableModelListener {
@@ -40,14 +45,11 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	MainView mainView;
 	JLabel nomeLabel;
 	JTextField nomeText;
+	JButton fecharBtn;
 	JButton adicionarLinhaBtn;
 	JButton adicionarColunaBtn;
 	JButton removerLinhaBtn;
 	JButton removerColunaBtn;;
-	JButton determinizarBtn;
-	JButton minimizarBtn;
-	JButton gerarGRBtn;
-	JButton salvarBtn;
 	JPanel operacoesTabelaPanel;
 	JPanel operacoesAFPanel;
 	JPanel topoPanel;
@@ -55,6 +57,11 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	JScrollPane scrollPanel;
 	JTable tabelaAF;
 	AFTableModel modeloTabelaAF;
+	JMenuBar menuOperacoes;
+	JMenuItem determinizarItem;
+	JMenuItem minimizarItem;
+	JMenuItem gerarGRItem;
+	JMenuItem salvarItem;
 
 	public AFPanel(Controller controller, MainView mainView, String operacao, String nomePai) {
 		this.controller = controller;
@@ -89,6 +96,8 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 
 		nomeLabel = new JLabel("Nome");
 		nomeText = new JTextField(25);
+		fecharBtn = new JButton(new ImageIcon("src/image/close.png", "Fechar"));
+		fecharBtn.addActionListener(this);
 		adicionarLinhaBtn = new JButton("+ Linha");
 		adicionarLinhaBtn.addActionListener(this);
 		adicionarColunaBtn = new JButton("+ Coluna");
@@ -97,14 +106,8 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		removerLinhaBtn.addActionListener(this);
 		removerColunaBtn = new JButton("- Coluna");
 		removerColunaBtn.addActionListener(this);
-		minimizarBtn = new JButton("Minimizar");
-		minimizarBtn.addActionListener(this);
-		determinizarBtn = new JButton("Determinizar");
-		determinizarBtn.addActionListener(this);
-		gerarGRBtn = new JButton("Gerar GR");
-		gerarGRBtn.addActionListener(this);
-		salvarBtn = new JButton("Salvar");
-		salvarBtn.addActionListener(this);
+
+		criaMenuOperacoes();
 
 		operacoesAFPanel = new JPanel();
 		operacoesTabelaPanel = new JPanel();
@@ -112,15 +115,39 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		topoPanel = new JPanel(new BorderLayout());
 	}
 
+	private void criaMenuOperacoes() {
+		menuOperacoes = new JMenuBar();
+		menuOperacoes.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+
+		JMenu menu;
+		menu = new JMenu("Operações do Autômato");
+		determinizarItem = new JMenuItem("Determinizar");
+		determinizarItem.setActionCommand(MenuOption.DETERMINIZAR.name());
+		determinizarItem.addActionListener(this);
+		menu.add(determinizarItem);
+		minimizarItem = new JMenuItem("Minimizar");
+		minimizarItem.setActionCommand(MenuOption.MINIMIZAR.name());
+		minimizarItem.addActionListener(this);
+		menu.add(minimizarItem);
+		gerarGRItem = new JMenuItem("Gerar GR");
+		gerarGRItem.setActionCommand(MenuOption.GERAR_GR.name());
+		gerarGRItem.addActionListener(this);
+		menu.add(gerarGRItem);
+		salvarItem = new JMenuItem("Salvar");
+		salvarItem.setActionCommand(MenuOption.SALVAR.name());
+		salvarItem.addActionListener(this);
+		menu.add(salvarItem);
+
+		menuOperacoes.add(menu);
+	}
+
 	private void posicioneComponentes() {
+		operacoesTabelaPanel.add(fecharBtn);
 		operacoesTabelaPanel.add(adicionarLinhaBtn);
 		operacoesTabelaPanel.add(adicionarColunaBtn);
 		operacoesTabelaPanel.add(removerLinhaBtn);
 		operacoesTabelaPanel.add(removerColunaBtn);
-		operacoesAFPanel.add(minimizarBtn);
-		operacoesAFPanel.add(determinizarBtn);
-		operacoesAFPanel.add(gerarGRBtn);
-		operacoesAFPanel.add(salvarBtn);
+		operacoesAFPanel.add(menuOperacoes);
 		nomePanel.add(nomeLabel);
 		nomePanel.add(nomeText);
 
@@ -161,14 +188,16 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 				modeloTabelaAF.removerColuna(col);
 				ajustaTamanhoColunas();
 			}
-		} else if (e.getSource() == minimizarBtn) {
+		} else if (e.getSource() == minimizarItem) {
 
-		} else if (e.getSource() == determinizarBtn) {
+		} else if (e.getSource() == determinizarItem) {
 			determinizarAutomato();
-		} else if (e.getSource() == gerarGRBtn) {
+		} else if (e.getSource() == gerarGRItem) {
 
-		} else if (e.getSource() == salvarBtn) {
+		} else if (e.getSource() == salvarItem) {
 			controller.getPersistencia().salvarComo(this, geraAutomatoDaTabela());
+		} else if (e.getSource() == fecharBtn) {
+			mainView.removePanel(this);
 		}
 	}
 
@@ -193,17 +222,22 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 				List<String> transicoesSeparadas = new ArrayList<String>();
 				String trans = ((String) modeloTabelaAF.getItens().get(j).get(i)).trim();
 				String newTrans = "";
-				for (int k = 0; k < trans.length(); k++) {
-					if (trans.charAt(k) == 'q') {
-						newTrans = String.valueOf(trans.charAt(k));
-					} else if (Character.isDigit(trans.charAt(k)) && k < trans.length() - 1 && Character.isDigit(trans.charAt(k + 1))) {
-						newTrans += String.valueOf(trans.charAt(k));
-					} else if (Character.isDigit(trans.charAt(k)) && k < trans.length() - 1 && !Character.isDigit(trans.charAt(k + 1))) {
-						newTrans += String.valueOf(trans.charAt(k));
-						transicoesSeparadas.add(newTrans);
-					} else if (Character.isDigit(trans.charAt(k)) && k == trans.length() - 1) {
-						newTrans += String.valueOf(trans.charAt(k));
-						transicoesSeparadas.add(newTrans);
+				if (trans.charAt(0) == '[' && trans.charAt(trans.length() - 1) == ']') {
+					newTrans = trans.substring(1, trans.length() - 1).trim();
+					transicoesSeparadas.add(newTrans);
+				} else {
+					for (int k = 0; k < trans.length(); k++) {
+						if (trans.charAt(k) == 'q') {
+							newTrans = String.valueOf(trans.charAt(k));
+						} else if (Character.isDigit(trans.charAt(k)) && k < trans.length() - 1 && Character.isDigit(trans.charAt(k + 1))) {
+							newTrans += String.valueOf(trans.charAt(k));
+						} else if (Character.isDigit(trans.charAt(k)) && k < trans.length() - 1 && !Character.isDigit(trans.charAt(k + 1))) {
+							newTrans += String.valueOf(trans.charAt(k));
+							transicoesSeparadas.add(newTrans);
+						} else if (Character.isDigit(trans.charAt(k)) && k == trans.length() - 1) {
+							newTrans += String.valueOf(trans.charAt(k));
+							transicoesSeparadas.add(newTrans);
+						}
 					}
 				}
 				for (int h = 0; h < transicoesSeparadas.size(); h++) {
