@@ -9,6 +9,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import model.Automato;
+
+import controller.Controller;
+
 import view.af.AFPanel;
 import view.gr.GRPanel;
 
@@ -19,9 +23,11 @@ public class MainView extends JFrame implements ActionListener {
 
 	JDialog aboutDialog;
 	JPanel principalPanel;
-
-	public MainView() {
+	Controller controller;
+	
+	public MainView(Controller controller) {
 		super("Lucas Just Meller - Milton Bittencourt");
+		this.controller = controller;
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		principalPanel = new JPanel();
@@ -44,18 +50,25 @@ public class MainView extends JFrame implements ActionListener {
 			System.exit(0);
 		case CRIAR_AF:
 			principalPanel.removeAll();
-			principalPanel.add(new AFPanel());
+			principalPanel.add(new AFPanel(controller, this));
 			pack();
 			break;
 		case CRIAR_GR:
 			principalPanel.removeAll();
-			principalPanel.add(new GRPanel());
+			principalPanel.add(new GRPanel(controller, this));
 			pack();
 			break;
 		case ABOUT:
 			aboutDialog = new AboutDialog(this);
 			break;
 		}
+	}
+
+	public void gerarAutomato(Automato automatoDet) {
+		AFPanel afp = new AFPanel(controller, this);
+		afp.setAutomato(automatoDet);
+		principalPanel.add(afp);
+		pack();
 	}
 
 }

@@ -1,19 +1,11 @@
 package controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import model.Automato;
-import model.Estado;
-import model.Transicao;
-import view.MainView;
-
 public class Main {
 
 	public static void main(String[] args) {
 		
-		MainView view = new MainView();
-		view.setVisible(true);
+		Environment env = new Environment(); 
+		env.start();
 		
 //		Automato automato = new Automato("GERA-A", "Qualquer sequencia de a");
 //		

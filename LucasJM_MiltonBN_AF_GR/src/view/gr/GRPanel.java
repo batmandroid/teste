@@ -14,10 +14,16 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumn;
 
+import view.MainView;
+
+import controller.Controller;
+
 public class GRPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 4834066306800198068L;
 
+	Controller controller;
+	MainView mainView;
 	JButton adicionarLinhaBtn;
 	JButton adicionarColunaBtn;
 	JButton removerLinhaBtn;
@@ -29,7 +35,9 @@ public class GRPanel extends JPanel implements ActionListener {
 	JTable tabelaGR;
 	GRTableModel modeloTabelaGR;
 
-	public GRPanel() {
+	public GRPanel(Controller controller, MainView mainView) {
+		this.controller = controller;
+		this.mainView = mainView;
 		modeloTabelaGR = new GRTableModel();
 
 		definaComponentes();
@@ -98,7 +106,7 @@ public class GRPanel extends JPanel implements ActionListener {
 				ajustaTamanhoColunas();
 			}
 		} else if (e.getSource() == gerarAFBtn) {
-
+			
 		}
 	}
 
@@ -107,7 +115,7 @@ public class GRPanel extends JPanel implements ActionListener {
 		for (int i = 0; i < tabelaGR.getColumnCount(); i++) {
 			column = tabelaGR.getColumnModel().getColumn(i);
 			if (i == 1) {
-				column.setMaxWidth(5);
+				column.setMaxWidth(20);
 			}
 		}
 	}
