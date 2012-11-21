@@ -45,15 +45,19 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	MainView mainView;
 	JLabel nomeLabel;
 	JTextField nomeText;
+	JLabel sentencaLabel;
+	JTextField sentencaText;
 	JButton fecharBtn;
 	JButton adicionarLinhaBtn;
 	JButton adicionarColunaBtn;
 	JButton removerLinhaBtn;
 	JButton removerColunaBtn;;
-	JPanel operacoesTabelaPanel;
 	JPanel operacoesAFPanel;
-	JPanel topoPanel;
+	JPanel sentencaPanel;
+	JPanel rodapePanel;
+	JPanel operacoesTabelaPanel;
 	JPanel nomePanel;
+	JPanel topoPanel;
 	JScrollPane scrollPanel;
 	JTable tabelaAF;
 	AFTableModel modeloTabelaAF;
@@ -62,6 +66,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	JMenuItem minimizarItem;
 	JMenuItem gerarGRItem;
 	JMenuItem salvarItem;
+	JMenuItem validarSentencaItem;
 
 	public AFPanel(Controller controller, MainView mainView, String operacao, String nomePai) {
 		this.controller = controller;
@@ -98,6 +103,8 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 
 		nomeLabel = new JLabel("Nome");
 		nomeText = new JTextField(20);
+		sentencaLabel = new JLabel("Sentença");
+		sentencaText = new JTextField(20);
 		fecharBtn = new JButton(new ImageIcon("src/image/close.png", "Fechar"));
 		fecharBtn.addActionListener(this);
 		fecharBtn.setPreferredSize(new Dimension(16, 16));
@@ -113,6 +120,8 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		criaMenuOperacoes();
 
 		operacoesAFPanel = new JPanel();
+		sentencaPanel = new JPanel();
+		rodapePanel = new JPanel(new BorderLayout());
 		operacoesTabelaPanel = new JPanel();
 		nomePanel = new JPanel();
 		topoPanel = new JPanel(new BorderLayout());
@@ -123,7 +132,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		menuOperacoes.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
 		JMenu menu;
-		menu = new JMenu("Operações do Autômato");
+		menu = new JMenu("Operações");
 		determinizarItem = new JMenuItem("Determinizar");
 		determinizarItem.setActionCommand(MenuOption.DETERMINIZAR.name());
 		determinizarItem.addActionListener(this);
@@ -136,6 +145,10 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		gerarGRItem.setActionCommand(MenuOption.GERAR_GR.name());
 		gerarGRItem.addActionListener(this);
 		menu.add(gerarGRItem);
+		validarSentencaItem = new JMenuItem("Validar sentença");
+		validarSentencaItem.setActionCommand(MenuOption.VALIDAR_SENTENCA.name());
+		validarSentencaItem.addActionListener(this);
+		menu.add(validarSentencaItem);
 		salvarItem = new JMenuItem("Salvar");
 		salvarItem.setActionCommand(MenuOption.SALVAR.name());
 		salvarItem.addActionListener(this);
@@ -153,15 +166,19 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		nomePanel.add(fecharBtn);
 		nomePanel.add(nomeLabel);
 		nomePanel.add(nomeText);
+		sentencaPanel.add(sentencaLabel);
+		sentencaPanel.add(sentencaText);
+
+		rodapePanel.add(operacoesTabelaPanel, BorderLayout.NORTH);
+		rodapePanel.add(sentencaPanel, BorderLayout.SOUTH);
 
 		topoPanel.add(nomePanel, BorderLayout.NORTH);
 		topoPanel.add(operacoesTabelaPanel, BorderLayout.SOUTH);
 
 		this.setLayout(new BorderLayout());
-		this.add("North", topoPanel);
-		this.add("Center", scrollPanel);
-		this.add("South", operacoesAFPanel);
-
+		this.add(topoPanel, BorderLayout.NORTH);
+		this.add(scrollPanel, BorderLayout.CENTER);
+		this.add(operacoesAFPanel, BorderLayout.SOUTH);
 	}
 
 	@Override
@@ -258,9 +275,11 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			for (int i = 3; i < modeloTabelaAF.getColunas().size(); i++) {
 				String[] transicoesSeparadas = ((String) modeloTabelaAF.getItens().get(j).get(i)).trim().split(",");
 				for (int h = 0; h < transicoesSeparadas.length; h++) {
-					Transicao transicao = new Transicao(modeloTabelaAF.getColunas().get(i).trim().charAt(0), estados.get(transicoesSeparadas[h]
-							.trim()));
-					transicoes.add(transicao);
+					if (!transicoesSeparadas[h].trim().equals("")) {
+						Transicao transicao = new Transicao(modeloTabelaAF.getColunas().get(i).trim().charAt(0), estados.get(transicoesSeparadas[h]
+								.trim()));
+						transicoes.add(transicao);
+					}
 				}
 			}
 			estados.get(((String) modeloTabelaAF.getItens().get(j).get(2)).trim()).setTransicoes(transicoes);
@@ -271,6 +290,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			estadosLista.add(estado);
 		}
 		automato.setEstados(estadosLista);
+
 		return automato;
 	}
 
@@ -308,7 +328,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			String typed = (String) tabelaAF.getValueAt(row, col);
 			typed = typed.trim();
 
-			if (!typed.equals("") && !typed.matches("^(q)[0-9]+(,(q)[0-9]+)*$")) {
+			if (!typed.equals("") && !typed.matches("^(q)[0-9]+(,(q)[0-9]+)*|(q)[0-9]+((q)[0-9]+)*$")) {
 				JOptionPane.showMessageDialog(null, "O valor deve ser 'q_', 'q_q_...' ou q_,q_...");
 				tabelaAF.setValueAt(" ", row, col);
 			}

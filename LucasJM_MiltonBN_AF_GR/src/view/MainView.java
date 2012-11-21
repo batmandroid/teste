@@ -32,7 +32,6 @@ public class MainView extends JFrame implements ActionListener {
 		principalPanel = new JPanel();
 		add(principalPanel);
 		setResizable(true);
-		setLocationRelativeTo(null);
 		setJMenuBar(new MenuBar(this));
 		Dimension dimension = new Dimension(600, 450);
 		setMinimumSize(dimension);
