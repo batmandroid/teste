@@ -96,10 +96,17 @@ public class Automato implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Automato [estados=" + estados + "]";
+
+		String x = "";
+
+		for (Estado estado : estados) {
+			x = x + "Nome: " + estado.getNome() + "\n";
+			for (Transicao trans : estado.getTransicoes()) {
+				x = x + "Simbolo: " + trans.getSimbolo() + " destino: " + trans.getEstadoDestino().getNome() + "\n";
+			}
+		}
+
+		return x;
 	}
-	
-	
-	
 	
 }
