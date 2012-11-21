@@ -217,7 +217,9 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 				determinizarAutomato();
 			}
 		} else if (e.getSource() == gerarGRItem) {
-
+			if (validaTabela()) {
+				geraGr();
+			}
 		} else if (e.getSource() == validarSentencaItem) {
 			validaSentenca();
 		} else if (e.getSource() == salvarItem) {
@@ -225,6 +227,11 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		} else if (e.getSource() == fecharBtn) {
 			mainView.removePanel(this);
 		}
+	}
+
+	private void geraGr() {
+		Automato automato = geraAutomatoDaTabela();
+		controller.converteAFtoGR(automato);
 	}
 
 	private void validaSentenca() {

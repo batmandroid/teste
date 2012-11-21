@@ -4,6 +4,7 @@ import java.util.List;
 
 import model.Automato;
 import model.Estado;
+import model.GramaticaRegular;
 import model.Transicao;
 
 public class Controller {
@@ -21,9 +22,16 @@ public class Controller {
 	public Automato minimizaAutomato(Automato automato) {
 		return new Minimizador().minimizaAutomto(automato);
 	}
+	
+	public GramaticaRegular converteAFtoGR(Automato e){
+		return new Conversor().converteAutomatoParaGramatica(e);
+	}
 
 	public boolean validaSentenca(Automato automato, List<Character> sentenca) {
 
+		System.out.println(automato);
+		System.out.println(sentenca);
+		
 		List<Estado> estados = automato.getEstados();
 		boolean isEstadoFinal = false;
 		Estado estadoInicial = null;

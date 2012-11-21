@@ -99,11 +99,19 @@ public class Automato implements Serializable {
 
 		String x = "";
 
-		for (Estado estado : estados) {
-			x = x + "Nome: " + estado.getNome() + "\n";
-			for (Transicao trans : estado.getTransicoes()) {
-				x = x + "Simbolo: " + trans.getSimbolo() + " destino: " + trans.getEstadoDestino().getNome() + "\n";
+		try {
+			for (Estado estado : estados) {
+				x = x + "Nome: " + estado.getNome() + "\n";
+				for (Transicao trans : estado.getTransicoes()) {
+					x = x + "Simbolo: " + trans.getSimbolo() ;
+					x = x + " destino: " + trans.getEstadoDestino().getNome() + "\n";
+				}
 			}
+		} catch (Exception e) {
+			System.out.println(x);
+			
+			System.out.println("caiu no catch");
+			e.printStackTrace();
 		}
 
 		return x;
