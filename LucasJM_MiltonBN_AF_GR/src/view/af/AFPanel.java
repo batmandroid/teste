@@ -169,7 +169,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		sentencaPanel.add(sentencaLabel);
 		sentencaPanel.add(sentencaText);
 
-		rodapePanel.add(operacoesTabelaPanel, BorderLayout.NORTH);
+		rodapePanel.add(scrollPanel, BorderLayout.NORTH);
 		rodapePanel.add(sentencaPanel, BorderLayout.SOUTH);
 
 		topoPanel.add(nomePanel, BorderLayout.NORTH);
@@ -177,7 +177,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 
 		this.setLayout(new BorderLayout());
 		this.add(topoPanel, BorderLayout.NORTH);
-		this.add(scrollPanel, BorderLayout.CENTER);
+		this.add(rodapePanel, BorderLayout.CENTER);
 		this.add(operacoesAFPanel, BorderLayout.SOUTH);
 	}
 
@@ -218,10 +218,26 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			}
 		} else if (e.getSource() == gerarGRItem) {
 
+		} else if (e.getSource() == validarSentencaItem) {
+			validaSentenca();
 		} else if (e.getSource() == salvarItem) {
 			controller.getPersistencia().salvarComo(this, geraAutomatoDaTabela());
 		} else if (e.getSource() == fecharBtn) {
 			mainView.removePanel(this);
+		}
+	}
+
+	private void validaSentenca() {
+		List<Character> itensSentenca = new ArrayList<Character>();
+		String sentenca = sentencaText.getText();
+		for (int i = 0; i < sentenca.length(); i++) {
+			itensSentenca.add(sentenca.charAt(i));
+		}
+		boolean reconhecida = controller.validaSentenca(geraAutomatoDaTabela(), itensSentenca);
+		if(reconhecida){
+			JOptionPane.showMessageDialog(null, "Sentença válida", "Validação", JOptionPane.INFORMATION_MESSAGE);
+		} else{
+			JOptionPane.showMessageDialog(null, "Sentença não válida", "Validação", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

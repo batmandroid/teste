@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import model.Automato;
 import model.Estado;
@@ -23,6 +24,7 @@ public class MainView extends JFrame implements ActionListener {
 	JDialog aboutDialog;
 	JPanel principalPanel;
 	Controller controller;
+	JScrollPane scrollPanel;
 
 	public MainView(Controller controller) {
 		super("Lucas Just Meller - Milton Bittencourt");
@@ -30,10 +32,11 @@ public class MainView extends JFrame implements ActionListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		principalPanel = new JPanel();
-		add(principalPanel);
+		scrollPanel = new JScrollPane(principalPanel);
+		add(scrollPanel);
 		setResizable(true);
 		setJMenuBar(new MenuBar(this));
-		Dimension dimension = new Dimension(600, 450);
+		Dimension dimension = new Dimension(800, 450);
 		setMinimumSize(dimension);
 		setPreferredSize(dimension);
 		pack();
