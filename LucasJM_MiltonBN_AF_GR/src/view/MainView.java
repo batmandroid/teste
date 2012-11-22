@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -109,6 +110,13 @@ public class MainView extends JFrame implements ActionListener {
 		GRPanel grp = new GRPanel(controller, this, OperacoesConstantes.GERAR_GR);
 		grp.setGramatica(gramatica);
 		principalPanel.add(grp);
+		pack();
+	}
+
+	public void gerarAutomatoDaGramatica(Automato automato) {
+		AFPanel afp = new AFPanel(controller, this, OperacoesConstantes.NOVO, automato.getNome());
+		afp.setAutomato(automato);
+		principalPanel.add(afp);
 		pack();
 	}
 

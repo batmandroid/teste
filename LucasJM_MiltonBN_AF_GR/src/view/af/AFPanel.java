@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,6 +45,8 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	MainView mainView;
 	JLabel nomeLabel;
 	JTextField nomeText;
+	JLabel enumerarLabel;
+	JTextField enumerarText;
 	JLabel sentencaLabel;
 	JTextField sentencaText;
 	JButton fecharBtn;
@@ -52,10 +56,12 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	JButton removerColunaBtn;;
 	JPanel operacoesAFPanel;
 	JPanel sentencaPanel;
-	JPanel rodapePanel;
+	JPanel centerPanel;
 	JPanel operacoesTabelaPanel;
 	JPanel nomePanel;
 	JPanel topoPanel;
+	JPanel enumerarPanel;
+	JPanel rodapePanel;
 	JScrollPane scrollPanel;
 	JTable tabelaAF;
 	AFTableModel modeloTabelaAF;
@@ -65,6 +71,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	JMenuItem gerarGRItem;
 	JMenuItem salvarItem;
 	JMenuItem validarSentencaItem;
+	JMenuItem enumerarItem;
 
 	public AFPanel(Controller controller, MainView mainView, String operacao, String nomePai) {
 		this.controller = controller;
@@ -99,6 +106,8 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 
 		ajustaTamanhoColunas();
 
+		enumerarLabel = new JLabel("Limite para enumeração");
+		enumerarText = new JTextField(11);
 		nomeLabel = new JLabel("Nome");
 		nomeText = new JTextField(20);
 		sentencaLabel = new JLabel("Sentença");
@@ -119,10 +128,29 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 
 		operacoesAFPanel = new JPanel();
 		sentencaPanel = new JPanel();
-		rodapePanel = new JPanel(new BorderLayout());
+		centerPanel = new JPanel(new BorderLayout());
 		operacoesTabelaPanel = new JPanel();
+		enumerarPanel = new JPanel();
+		rodapePanel = new JPanel(new BorderLayout());
 		nomePanel = new JPanel();
 		topoPanel = new JPanel(new BorderLayout());
+
+		enumerarText.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if (!Character.isDigit(e.getKeyChar())) {
+					e.consume();
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+		});
 	}
 
 	private void criaMenuOperacoes() {
@@ -147,6 +175,10 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		validarSentencaItem.setActionCommand(MenuOption.VALIDAR_SENTENCA.name());
 		validarSentencaItem.addActionListener(this);
 		menu.add(validarSentencaItem);
+		enumerarItem = new JMenuItem("Enumerar");
+		enumerarItem.setActionCommand(MenuOption.ENUMERAR.name());
+		enumerarItem.addActionListener(this);
+		menu.add(enumerarItem);
 		salvarItem = new JMenuItem("Salvar");
 		salvarItem.setActionCommand(MenuOption.SALVAR.name());
 		salvarItem.addActionListener(this);
@@ -166,17 +198,22 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		nomePanel.add(nomeText);
 		sentencaPanel.add(sentencaLabel);
 		sentencaPanel.add(sentencaText);
+		enumerarPanel.add(enumerarLabel);
+		enumerarPanel.add(enumerarText);
 
-		rodapePanel.add(scrollPanel, BorderLayout.NORTH);
-		rodapePanel.add(sentencaPanel, BorderLayout.SOUTH);
+		centerPanel.add(scrollPanel, BorderLayout.NORTH);
+		centerPanel.add(sentencaPanel, BorderLayout.SOUTH);
 
 		topoPanel.add(nomePanel, BorderLayout.NORTH);
 		topoPanel.add(operacoesTabelaPanel, BorderLayout.SOUTH);
 
+		rodapePanel.add(enumerarPanel, BorderLayout.NORTH);
+		rodapePanel.add(operacoesAFPanel, BorderLayout.SOUTH);
+
 		this.setLayout(new BorderLayout());
 		this.add(topoPanel, BorderLayout.NORTH);
-		this.add(rodapePanel, BorderLayout.CENTER);
-		this.add(operacoesAFPanel, BorderLayout.SOUTH);
+		this.add(centerPanel, BorderLayout.CENTER);
+		this.add(rodapePanel, BorderLayout.SOUTH);
 	}
 
 	@Override
@@ -224,6 +261,12 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			controller.getPersistencia().salvarComo(this, geraAutomatoDaTabela());
 		} else if (e.getSource() == fecharBtn) {
 			mainView.removePanel(this);
+		} else if (e.getSource() == enumerarItem) {
+			if (enumerarText.getText().trim().equals("")) {
+				JOptionPane.showMessageDialog(null, "Preencha o campo enumeração para executar essa ação!");
+			} else {
+				//TODO enumerar
+			}
 		}
 	}
 
@@ -270,7 +313,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		Automato automato = geraAutomatoDaTabela();
 		mainView.gerarGR(controller.converteAFtoGR(automato));
 	}
-	
+
 	private void determinizarAutomato() {
 		Automato automato = geraAutomatoDaTabela();
 		mainView.gerarAutomatoDeterminizado(controller.determinizaAutomato(automato));

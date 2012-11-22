@@ -15,15 +15,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 
 import model.GramaticaRegular;
 import view.MainView;
 import controller.Controller;
 
-public class GRPanel extends JPanel implements ActionListener, TableModelListener {
+public class GRPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 4834066306800198068L;
 
@@ -54,8 +52,6 @@ public class GRPanel extends JPanel implements ActionListener, TableModelListene
 	}
 
 	private void definaComponentes() {
-		this.setPreferredSize(new Dimension(300, 302));
-		
 		tabelaGR = new JTable(modeloTabelaGR);
 		tabelaGR.setRowSelectionAllowed(false);
 		tabelaGR.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -133,29 +129,8 @@ public class GRPanel extends JPanel implements ActionListener, TableModelListene
 	}
 
 	private void gerarAF() {
-		//GramaticaRegular gramatica = geraGramaticaRegularDaTabela();
-		GramaticaRegular gramatica = new GramaticaRegular();
-		
-		List<String> str0 = new ArrayList<String>();
-		str0.add("S");
-		str0.add("bS");
-		str0.add("a");
-		str0.add("&");
-		str0.add("aA");
-		
-		List<String> str1 = new ArrayList<String>();
-		str1.add("A");
-		str1.add("bS");
-		
-		List<List<String>> all = new ArrayList<List<String>>();
-		
-		gramatica.setOrdenado(all);
-		
-		all.add(str0);
-		all.add(str1);
-		
-		controller.converteGRtoAf(gramatica);
-		// mainView.gerarAF(controller.converteAFtoGR(gramatica));
+		GramaticaRegular gramatica = geraGramaticaRegularDaTabela();
+		mainView.gerarAutomatoDaGramatica(controller.converteGRtoAf(gramatica));
 	}
 
 	private GramaticaRegular geraGramaticaRegularDaTabela() {
@@ -166,7 +141,7 @@ public class GRPanel extends JPanel implements ActionListener, TableModelListene
 		for (List<String> linha : itens) {
 			List<String> novaLinha = new ArrayList<String>();
 			for (String itemDaLinha : linha) {
-				if (!itemDaLinha.trim().equals("->")) {
+				if (!itemDaLinha.trim().equals("->") && !itemDaLinha.trim().equals("")) {
 					novaLinha.add(itemDaLinha.trim());
 				}
 			}
@@ -215,43 +190,9 @@ public class GRPanel extends JPanel implements ActionListener, TableModelListene
 				colunas.add("");
 			}
 		}
-
 		modeloTabelaGR.setColunas(colunas);
 		modeloTabelaGR.setItens(gramatica.getOrdenado());
 		ajustaTamanhoColunas();
-	}
-
-	@Override
-	public void tableChanged(TableModelEvent e) {
-		switch (e.getType()) {
-		case TableModelEvent.UPDATE:
-			int row = tabelaGR.getSelectedRow();
-			int col = tabelaGR.getSelectedColumn();
-
-			if (row != -1 && col != -1) {
-				validaEntrada(row, col);
-			}
-		}
-
-	}
-
-	private void validaEntrada(int row, int col) {
-		switch (col) {
-		case 0:
-			break;
-		case 1:
-			break;
-		default:
-			// String typed = (String) tabelaGR.getValueAt(row, col);
-			// typed = typed.trim();
-			// if (!typed.equals("") &&
-			// !typed.matches("^(q)[0-9]+(,(q)[0-9]+)*$")) {
-			// JOptionPane.showMessageDialog(null,
-			// "O valor deve ser 'q_', 'q_q_...' ou q_,q_...");
-			// tabelaGR.setValueAt(" ", row, col);
-			// }
-			break;
-		}
 	}
 
 }

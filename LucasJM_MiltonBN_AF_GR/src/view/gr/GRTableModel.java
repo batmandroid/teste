@@ -62,8 +62,8 @@ public class GRTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(Object value, int row, int col) {
 		List<String> lin = itens.get(row);
-		lin.set(col, (String)value);
-		fireTableCellUpdated(row, col);
+		lin.set(col, (String) value);
+		fireTableDataChanged();
 	}
 
 	@Override

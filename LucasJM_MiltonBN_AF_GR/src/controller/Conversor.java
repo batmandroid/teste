@@ -34,9 +34,7 @@ public class Conversor {
 		todosEstados.add(estadoPai);
 
 		for (Estado estado : estados) {
-
 			List<String> estadosDemais = new ArrayList<String>();
-
 			estadosDemais.add(estado.getNome());
 
 			for (Transicao transicao : estado.getTransicoes()) {
@@ -46,12 +44,10 @@ public class Conversor {
 			if (estado.isEstFinal()) {
 				estadosDemais.add("&");
 			}
-
 			todosEstados.add(estadosDemais);
 		}
 
 		gr.setOrdenado(todosEstados);
-
 		return gr;
 	}
 
@@ -76,6 +72,7 @@ public class Conversor {
 
 		// pega os simbolos
 		for (List<String> list : allstates) {
+			System.out.println(list);
 			for (int i = 0; i < list.size(); i++) {
 				if (i > 0 && !terminais.contains(list.get(i).substring(0, 1))) {
 					terminais.add(list.get(i).substring(0, 1));

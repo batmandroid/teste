@@ -79,6 +79,7 @@ public class Persistencia {
 			}
 
 		});
+		
 		int ret = fc.showOpenDialog(panel);
 		if (ret == JFileChooser.APPROVE_OPTION) {
 			caminho = fc.getSelectedFile();

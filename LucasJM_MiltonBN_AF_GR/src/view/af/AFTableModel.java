@@ -68,6 +68,7 @@ public class AFTableModel extends AbstractTableModel {
 		return getValueAt(0, columnIndex).getClass();
 	}
 
+	@Override
 	public void setValueAt(Object value, int row, int col) {
         List<Object> lin = itens.get(row);
         lin.set(col, value);
