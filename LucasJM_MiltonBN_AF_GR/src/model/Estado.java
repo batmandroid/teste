@@ -143,5 +143,12 @@ public class Estado implements Serializable {
 			return false;
 		return true;
 	}
+
+	public void addTransicao(Transicao transicao) {
+		if (transicoes == null) {
+			transicoes = new ArrayList<Transicao>();
+		}
+		transicoes.add(transicao);
+	}
 	
 }

@@ -133,7 +133,28 @@ public class GRPanel extends JPanel implements ActionListener, TableModelListene
 	}
 
 	private void gerarAF() {
-		GramaticaRegular gramatica = geraGramaticaRegularDaTabela();
+		//GramaticaRegular gramatica = geraGramaticaRegularDaTabela();
+		GramaticaRegular gramatica = new GramaticaRegular();
+		
+		List<String> str0 = new ArrayList<String>();
+		str0.add("S");
+		str0.add("bS");
+		str0.add("a");
+		str0.add("&");
+		str0.add("aA");
+		
+		List<String> str1 = new ArrayList<String>();
+		str1.add("A");
+		str1.add("bS");
+		
+		List<List<String>> all = new ArrayList<List<String>>();
+		
+		gramatica.setOrdenado(all);
+		
+		all.add(str0);
+		all.add(str1);
+		
+		controller.converteGRtoAf(gramatica);
 		// mainView.gerarAF(controller.converteAFtoGR(gramatica));
 	}
 
