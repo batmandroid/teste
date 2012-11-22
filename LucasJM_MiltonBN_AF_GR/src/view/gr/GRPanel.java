@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,6 +29,7 @@ public class GRPanel extends JPanel implements ActionListener, TableModelListene
 
 	Controller controller;
 	MainView mainView;
+	JButton fecharBtn;
 	JButton adicionarLinhaBtn;
 	JButton adicionarColunaBtn;
 	JButton removerLinhaBtn;
@@ -52,6 +54,8 @@ public class GRPanel extends JPanel implements ActionListener, TableModelListene
 	}
 
 	private void definaComponentes() {
+		this.setPreferredSize(new Dimension(300, 302));
+		
 		tabelaGR = new JTable(modeloTabelaGR);
 		tabelaGR.setRowSelectionAllowed(false);
 		tabelaGR.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -61,6 +65,9 @@ public class GRPanel extends JPanel implements ActionListener, TableModelListene
 
 		ajustaTamanhoColunas();
 
+		fecharBtn = new JButton(new ImageIcon("src/image/close.png", "Fechar"));
+		fecharBtn.addActionListener(this);
+		fecharBtn.setPreferredSize(new Dimension(16, 16));
 		adicionarLinhaBtn = new JButton("+ Lin");
 		adicionarLinhaBtn.addActionListener(this);
 		adicionarColunaBtn = new JButton("+ Col");
@@ -79,6 +86,7 @@ public class GRPanel extends JPanel implements ActionListener, TableModelListene
 	}
 
 	private void posicioneComponentes() {
+		operacoesTabelaPanel.add(fecharBtn);
 		operacoesTabelaPanel.add(adicionarLinhaBtn);
 		operacoesTabelaPanel.add(adicionarColunaBtn);
 		operacoesTabelaPanel.add(removerLinhaBtn);
@@ -119,6 +127,8 @@ public class GRPanel extends JPanel implements ActionListener, TableModelListene
 			}
 		} else if (e.getSource() == salvarBtn) {
 			controller.getPersistencia().salvarGramaticaRegular(this, geraGramaticaRegularDaTabela());
+		} else if (e.getSource() == fecharBtn) {
+			mainView.removePanel(this);
 		}
 	}
 
