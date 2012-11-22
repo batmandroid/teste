@@ -3,7 +3,9 @@ package controller;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import model.Automato;
+import model.ClassesDeEquivalencia;
 import model.Estado;
 import model.Transicao;
 
@@ -73,7 +75,63 @@ public class Minimizador {
 	}
 
 	private Automato removeEstadosEsquivalentes(Automato e) {
+		
+		ClassesDeEquivalencia classesDeEquivalencia = new ClassesDeEquivalencia(e);
+
+		List<List<Estado>> classes = classesDeEquivalencia.separarClasses();
+
+		for (List<Estado> lista : classes) {
+
+			if (lista.size() > 1) {
+
+				for (int i = 0; i < lista.size(); i++) {
+
+					if (i != 0) {
+						int index = getIndiceEstado(lista.get(i).getNome(), e);
+						renomearTransacoes(lista.get(i), lista.get(0), e);
+						e.getEstados().remove(index);
+						lista.remove(i);
+					}
+				}
+
+			}
+		}
+		
 		return e;
+	}
+	
+	public void renomearTransacoes(Estado antigo, Estado novo, Automato automato ) {
+
+		for (Estado e : automato.getEstados()) {
+			boolean b = false;
+
+			for (Character s : automato.getAllSimbolos()) {
+
+				List<Transicao> lista = automato.getTransicoes();
+
+				for (Transicao t : lista) {
+
+					if (t.getEstadoDestino().getNome().equals(antigo.getNome())) {
+						b = true;
+					}
+				}
+
+				if (b == true) {
+					lista.clear();
+					//criarTransicao(e, novo, s);
+				}
+			}
+
+		}
+	}
+	
+	public int getIndiceEstado(String estado, Automato e) {
+		for (int i = 0; i < e.getEstados().size(); i++) {
+			if (e.getEstados().get(i).getNome().equals(estado)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	public Automato removeEstadosMortos(Automato e){
@@ -114,9 +172,9 @@ public class Minimizador {
 		
 		Automato naoInalcancaveis = removeInalcancaveis(automato);
 		Automato naoMortos = removeEstadosMortos(naoInalcancaveis);
-		Automato naoEquivalentes = removeEstadosEsquivalentes(naoMortos);
+	//	Automato naoEquivalentes = removeEstadosEsquivalentes(naoMortos);
 		
-		return naoEquivalentes;
+		return naoMortos;
 	}
 	
 }

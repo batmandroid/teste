@@ -2,6 +2,7 @@ package model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Automato implements Serializable {
@@ -17,7 +18,8 @@ public class Automato implements Serializable {
 		estados = new ArrayList<Estado>();
 	}
 
-	public Automato() {}
+	public Automato() {
+	}
 
 	public String getNome() {
 		return nome;
@@ -103,18 +105,60 @@ public class Automato implements Serializable {
 			for (Estado estado : estados) {
 				x = x + "Nome: " + estado.getNome() + "\n";
 				for (Transicao trans : estado.getTransicoes()) {
-					x = x + "Simbolo: " + trans.getSimbolo() ;
-					x = x + " destino: " + trans.getEstadoDestino().getNome() + "\n";
+					x = x + "Simbolo: " + trans.getSimbolo();
+					x = x + " destino: " + trans.getEstadoDestino().getNome()
+							+ "\n";
 				}
 			}
 		} catch (Exception e) {
 			System.out.println(x);
-			
+
 			System.out.println("caiu no catch");
 			e.printStackTrace();
 		}
 
 		return x;
 	}
-	
+
+	public List<Estado> getEstadosFinais() {
+		List<Estado> finais = new ArrayList<Estado>();
+		for (Estado estado : estados) {
+			if (estado.isEstFinal()) {
+				finais.add(estado);
+			}
+		}
+		return finais;
+	}
+
+	public List<Estado> getEstadosNaoFinais() {
+		List<Estado> naoFinais = new ArrayList<Estado>();
+		for (Estado estado : estados) {
+			if (!estado.isEstFinal()) {
+				naoFinais.add(estado);
+			}
+		}
+		return naoFinais;
+	}
+
+	public List<Character> getAllSimbolos() {
+		List<Character> list = new ArrayList<Character>();
+		for (Estado estado : estados) {
+			List<Transicao> transicoes = estado.getTransicoes();
+			for (Transicao transicao : transicoes) {
+				if (!list.contains(transicao.getSimbolo())) {
+					list.add(transicao.getSimbolo());
+				}
+			}
+		}
+		return list;
+	}
+
+	public List<Transicao> getTransicoes() {
+		List<Transicao> list = new ArrayList<Transicao>();
+		for (Estado estado : estados) {
+			list.addAll(estado.getTransicoes());
+		}
+		return list;
+	}
+
 }
