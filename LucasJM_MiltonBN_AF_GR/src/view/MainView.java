@@ -10,8 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import model.Automato;
-import model.Estado;
-import model.Transicao;
+import model.GramaticaRegular;
 import util.OperacoesConstantes;
 import view.af.AFPanel;
 import view.gr.GRPanel;
@@ -57,7 +56,7 @@ public class MainView extends JFrame implements ActionListener {
 			break;
 		case CRIAR_GR:
 			principalPanel.removeAll();
-			principalPanel.add(new GRPanel(controller, this));
+			principalPanel.add(new GRPanel(controller, this, OperacoesConstantes.NOVO));
 			repaint();
 			pack();
 			break;
@@ -65,15 +64,17 @@ public class MainView extends JFrame implements ActionListener {
 			principalPanel.removeAll();
 			AFPanel afp = new AFPanel(controller, this, OperacoesConstantes.NOVO);
 			Automato automato = controller.getPersistencia().carregar(principalPanel);
-			
-			for (Estado estado : automato.getEstados()) {
-				for (Transicao transicao : estado.getTransicoes()) {
-					System.out.println(transicao.getEstadoDestino().getNome());
-				}
-			}
-			
 			afp.setAutomato(automato);
 			principalPanel.add(afp);
+			repaint();
+			pack();
+			break;
+		case CARREGAR_GR:
+			principalPanel.removeAll();
+			GRPanel grp = new GRPanel(controller, this, OperacoesConstantes.NOVO);
+			GramaticaRegular gramatica = controller.getPersistencia().carregarGramaticaRegular(principalPanel);
+			grp.setGramatica(gramatica);
+			principalPanel.add(grp);
 			repaint();
 			pack();
 			break;
@@ -101,7 +102,14 @@ public class MainView extends JFrame implements ActionListener {
 		AFPanel afp = new AFPanel(controller, this, OperacoesConstantes.MINIMIZACAO, automatoMin.getNome());
 		afp.setAutomato(automatoMin);
 		principalPanel.add(afp);
-		pack();		
+		pack();
+	}
+
+	public void gerarGR(GramaticaRegular gramatica) {
+		GRPanel grp = new GRPanel(controller, this, OperacoesConstantes.GERAR_GR);
+		grp.setGramatica(gramatica);
+		principalPanel.add(grp);
+		pack();
 	}
 
 }

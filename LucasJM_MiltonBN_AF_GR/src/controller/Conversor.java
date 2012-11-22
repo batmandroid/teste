@@ -10,57 +10,44 @@ import model.Transicao;
 
 public class Conversor {
 
-	public GramaticaRegular converteAutomatoParaGramatica(Automato automato){
-		
+	public GramaticaRegular converteAutomatoParaGramatica(Automato automato) {
+
 		GramaticaRegular gr = new GramaticaRegular();
-				
+
 		List<Estado> estados = automato.getEstados();
 		Estado inicial = automato.getEstadoInicial();
 		estados.remove(inicial);
-		
-		String x = inicial.getNome() + " -> ";
-		
-		ArrayList<ArrayList<String>> todosEstados = new ArrayList<ArrayList<String>>();
-		
-		ArrayList<String> estadoPai = new ArrayList<String>();
-		
+
+		List<List<String>> todosEstados = new ArrayList<List<String>>();
+		List<String> estadoPai = new ArrayList<String>();
 		estadoPai.add(inicial.getNome());
-		
-		List<Transicao>	transInicial = inicial.getTransicoes();
-		
+
+		List<Transicao> transInicial = inicial.getTransicoes();
 		for (Transicao transicao : transInicial) {
-			x = x + transicao.getSimbolo() + transicao.getEstadoDestino().getNome()  + " | ";
 			estadoPai.add(transicao.getSimbolo() + transicao.getEstadoDestino().getNome());
 		}
-		
+
 		todosEstados.add(estadoPai);
-		
-		x = x + "\n";
-		
+
 		for (Estado estado : estados) {
-			
-			ArrayList<String> estadosDemais = new ArrayList<String>();
-			
-			x = x + estado.getNome() + " -> ";
-			
+
+			List<String> estadosDemais = new ArrayList<String>();
+
 			estadosDemais.add(estado.getNome());
-			
+
 			for (Transicao transicao : estado.getTransicoes()) {
-				x = x + transicao.getSimbolo() + transicao.getEstadoDestino().getNome() + " | ";
 				estadosDemais.add(transicao.getSimbolo() + transicao.getEstadoDestino().getNome());
 			}
-			
-			if(estado.isEstFinal()){
-				x = x +  "$";
+
+			if (estado.isEstFinal()) {
 				estadosDemais.add("$");
 			}
-			
-			x = x + "\n";
-			
+
+			todosEstados.add(estadosDemais);
 		}
-		
-		System.out.println(x);
-	
+
+		gr.setOrdenado(todosEstados);
+
 		return gr;
 	}
 

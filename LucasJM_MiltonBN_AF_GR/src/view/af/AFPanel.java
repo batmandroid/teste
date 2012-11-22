@@ -6,11 +6,9 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -218,7 +216,7 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			}
 		} else if (e.getSource() == gerarGRItem) {
 			if (validaTabela()) {
-				geraGr();
+				gerarGR();
 			}
 		} else if (e.getSource() == validarSentencaItem) {
 			validaSentenca();
@@ -229,11 +227,6 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		}
 	}
 
-	private void geraGr() {
-		Automato automato = geraAutomatoDaTabela();
-		controller.converteAFtoGR(automato);
-	}
-
 	private void validaSentenca() {
 		List<Character> itensSentenca = new ArrayList<Character>();
 		String sentenca = sentencaText.getText();
@@ -241,9 +234,9 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 			itensSentenca.add(sentenca.charAt(i));
 		}
 		boolean reconhecida = controller.validaSentenca(geraAutomatoDaTabela(), itensSentenca);
-		if(reconhecida){
+		if (reconhecida) {
 			JOptionPane.showMessageDialog(null, "Sentença válida", "Validação", JOptionPane.INFORMATION_MESSAGE);
-		} else{
+		} else {
 			JOptionPane.showMessageDialog(null, "Sentença não válida", "Validação", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -273,6 +266,11 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		}
 	}
 
+	private void gerarGR() {
+		Automato automato = geraAutomatoDaTabela();
+		mainView.gerarGR(controller.converteAFtoGR(automato));
+	}
+	
 	private void determinizarAutomato() {
 		Automato automato = geraAutomatoDaTabela();
 		mainView.gerarAutomatoDeterminizado(controller.determinizaAutomato(automato));
@@ -344,14 +342,22 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 	private void validaEntrada(int row, int col) {
 		switch (col) {
 		case 0:
+			Boolean inicia = (Boolean) tabelaAF.getValueAt(row, col);
+			if (inicia) {
+				for (int i = 0; i < modeloTabelaAF.getItens().size(); i++) {
+					if (((Boolean) modeloTabelaAF.getItens().get(i).get(0)) && row != i) {
+						JOptionPane.showMessageDialog(null, "Apenas um estado pode ser inicial.");
+						tabelaAF.setValueAt(false, row, col);
+					}
+				}
+			}
 			break;
 		case 1:
 			break;
 		default:
 			String typed = (String) tabelaAF.getValueAt(row, col);
 			typed = typed.trim();
-
-			if (!typed.equals("") && !typed.matches("^(q)[0-9]+(,(q)[0-9]+)*|(q)[0-9]+((q)[0-9]+)*$")) {
+			if (!typed.equals("") && !typed.matches("^(q)[0-9]+(,(q)[0-9]+)*$")) {
 				JOptionPane.showMessageDialog(null, "O valor deve ser 'q_', 'q_q_...' ou q_,q_...");
 				tabelaAF.setValueAt(" ", row, col);
 			}
@@ -361,25 +367,38 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 
 	public void setAutomato(Automato automato) {
 		nomeText.setText(automato.getNome());
-		Set<String> colunas = new HashSet<String>();
+		List<String> colunas = new ArrayList<String>();
 		List<List<Object>> itens = new ArrayList<List<Object>>();
+
+		for (Estado estado : automato.getEstados()) {
+			for (Transicao transicao : estado.getTransicoes()) {
+				if (!colunas.contains(transicao.getSimbolo().toString().trim())) {
+					colunas.add(transicao.getSimbolo().toString().trim());
+				}
+			}
+		}
 
 		for (Estado estado : automato.getEstados()) {
 			List<Object> linha = new ArrayList<Object>();
 			linha.add(estado.isInicial());
 			linha.add(estado.isEstFinal());
 			linha.add(estado.getNome());
-			String trans = "";
-			for (Transicao transicao : estado.getTransicoes()) {
-				if (!trans.equals("")) {
-					trans += ",";
+			List<Transicao> transicoes = estado.getTransicoes();
+			for (int i = 0; i < colunas.size(); i++) {
+				String trans = "";
+				for (int j = 0; j < transicoes.size(); j++) {
+					if (transicoes.get(j).getSimbolo().toString().equals(colunas.get(i))) {
+						if (!trans.equals("")) {
+							trans += ",";
+						}
+						trans += transicoes.get(j).getEstadoDestino().getNome().trim();
+					}
 				}
-				trans += transicao.getEstadoDestino().getNome();
-				colunas.add(transicao.getSimbolo().toString());
+				linha.add(trans);
 			}
-			linha.add(trans);
 			itens.add(linha);
 		}
+
 		modeloTabelaAF.setItens(itens);
 		modeloTabelaAF.addColunas(colunas);
 		ajustaTamanhoColunas();

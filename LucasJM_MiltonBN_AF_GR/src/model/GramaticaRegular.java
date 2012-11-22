@@ -1,16 +1,19 @@
 package model;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.util.List;
 
-public class GramaticaRegular {
+public class GramaticaRegular implements Serializable {
 
-	private ArrayList<ArrayList<String>> ordenado;
+	private static final long serialVersionUID = -179124786341550970L;
 
-	public ArrayList<ArrayList<String>> getOrdenado() {
+	private List<List<String>> ordenado;
+
+	public List<List<String>> getOrdenado() {
 		return ordenado;
 	}
 
-	public void setOrdenado(ArrayList<ArrayList<String>> ordenado) {
+	public void setOrdenado(List<List<String>> ordenado) {
 		this.ordenado = ordenado;
 	}
 	

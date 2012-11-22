@@ -9,23 +9,23 @@ public class GRTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
 
-	List<List<Object>> itens;
+	List<List<String>> itens;
 	List<String> colunas;
 
 	public GRTableModel() {
-		this.itens = new ArrayList<List<Object>>();
+		this.itens = new ArrayList<List<String>>();
 		this.colunas = new ArrayList<String>();
 		colunas.add("");
 		colunas.add("->");
 		colunas.add("");
 	}
 
-	public void setItens(List<List<Object>> itens) {
+	public void setItens(List<List<String>> itens) {
 		this.itens = itens;
 		fireTableDataChanged();
 	}
 
-	public List<List<Object>> getItens() {
+	public List<List<String>> getItens() {
 		return itens;
 	}
 
@@ -50,7 +50,7 @@ public class GRTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		List<Object> linha = itens.get(rowIndex);
+		List<String> linha = itens.get(rowIndex);
 		return linha.get(columnIndex);
 	}
 
@@ -59,8 +59,8 @@ public class GRTableModel extends AbstractTableModel {
 		return getValueAt(0, columnIndex).getClass();
 	}
 
-	public void setValueAt(Object value, int row, int col) {
-		List<Object> lin = itens.get(row);
+	public void setValueAt(String value, int row, int col) {
+		List<String> lin = itens.get(row);
 		lin.set(col, value);
 		fireTableCellUpdated(row, col);
 	}
@@ -74,7 +74,7 @@ public class GRTableModel extends AbstractTableModel {
 	}
 
 	public void adicionarLinha() {
-		List<Object> list = new ArrayList<Object>();
+		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < colunas.size(); i++) {
 			if (i == 1) {
 				list.add("->");
@@ -88,7 +88,7 @@ public class GRTableModel extends AbstractTableModel {
 
 	public void adicionarColuna() {
 		colunas.add("");
-		for (List<Object> linha : itens) {
+		for (List<String> linha : itens) {
 			linha.add("");
 		}
 		fireTableStructureChanged();
@@ -101,6 +101,11 @@ public class GRTableModel extends AbstractTableModel {
 
 	public void removerColuna(int coluna) {
 		colunas.remove(coluna);
+		fireTableStructureChanged();
+	}
+
+	public void setColunas(List<String> colunas) {
+		this.colunas = colunas;
 		fireTableStructureChanged();
 	}
 

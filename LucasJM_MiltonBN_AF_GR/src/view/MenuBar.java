@@ -20,6 +20,7 @@ public class MenuBar extends JMenuBar {
 		item.addActionListener(view);
 		menu.add(item);
 		item = new JMenuItem("Carregar GR");
+		item.setActionCommand(MenuOption.CARREGAR_GR.name());
 		item.addActionListener(view);
 		menu.add(item);
 		add(menu);

@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
 import model.Automato;
+import model.GramaticaRegular;
 
 public class Persistencia {
 
@@ -42,6 +43,23 @@ public class Persistencia {
 		}
 		return new Automato();
 	}
+	
+	public GramaticaRegular lerGramaticaRegular(File caminho) {
+		try {
+			FileInputStream fin = new FileInputStream(caminho);
+			ObjectInputStream ob = new ObjectInputStream(fin);
+			GramaticaRegular aux = (GramaticaRegular) ob.readObject();
+			return aux;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return new GramaticaRegular();
+	}
 
 	public Automato carregar(JPanel panel) {
 		File caminho = new File(".");
@@ -69,6 +87,33 @@ public class Persistencia {
 		}
 		return new Automato();
 	}
+	
+	public GramaticaRegular carregarGramaticaRegular(JPanel panel) {
+		File caminho = new File(".");
+		JFileChooser fc = new JFileChooser(caminho.getAbsolutePath() + "/src/arquivos");
+		fc.addChoosableFileFilter(new FileFilter() {
+			
+			@Override
+			public boolean accept(File f) {
+				if (f.toString().endsWith(".gr") || f.isDirectory())
+					return true;
+				return false;
+			}
+			
+			@Override
+			public String getDescription() {
+				return "Arquivos de gramatica regular (.gr)";
+			}
+			
+		});
+		int ret = fc.showOpenDialog(panel);
+		if (ret == JFileChooser.APPROVE_OPTION) {
+			caminho = fc.getSelectedFile();
+			
+			return lerGramaticaRegular(caminho);
+		}
+		return new GramaticaRegular();
+	}
 
 	public void escreverObjeto(File caminho, Automato automato) throws FileNotFoundException, IOException {
 		FileOutputStream fos = new FileOutputStream(caminho);
@@ -79,18 +124,15 @@ public class Persistencia {
 		fos.flush();
 		fos.close();
 	}
-
-	public void salvar(JPanel panel, File caminho, Automato automato) {
-		if (caminho == null)
-			salvarComo(panel, automato);
-		else
-			try {
-				escreverObjeto(caminho, automato);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	
+	public void escreverObjetoGramaticaRegular(File caminho, GramaticaRegular gramaticaRegular) throws FileNotFoundException, IOException {
+		FileOutputStream fos = new FileOutputStream(caminho);
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(gramaticaRegular);
+		oos.flush();
+		oos.close();
+		fos.flush();
+		fos.close();
 	}
 
 	public void salvarComo(JPanel panel, Automato automato) {
@@ -121,6 +163,42 @@ public class Persistencia {
 			caminho = new File(sf);
 			try {
 				escreverObjeto(caminho, automato);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void salvarGramaticaRegular(JPanel panel, GramaticaRegular gramaticaRegular) {
+		File caminho = new File(".");
+		JFileChooser fc = new JFileChooser(caminho.getAbsolutePath() + "/src/arquivos");
+		
+		fc.addChoosableFileFilter(new FileFilter() {
+			
+			@Override
+			public boolean accept(File f) {
+				if (f.toString().endsWith(".gr") || f.isDirectory())
+					return true;
+				return false;
+			}
+			
+			@Override
+			public String getDescription() {
+				return "Arquivos de gramatica regular (.gr)";
+			}
+			
+		});
+		int ret = fc.showSaveDialog(panel);
+		if (ret == JFileChooser.APPROVE_OPTION) {
+			File f = fc.getSelectedFile();
+			String sf = f.toString();
+			if (!sf.endsWith(".gr"))
+				sf = sf.concat(".gr");
+			caminho = new File(sf);
+			try {
+				escreverObjetoGramaticaRegular(caminho, gramaticaRegular);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

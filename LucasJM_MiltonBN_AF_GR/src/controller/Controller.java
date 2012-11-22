@@ -28,17 +28,11 @@ public class Controller {
 	}
 
 	public boolean validaSentenca(Automato automato, List<Character> sentenca) {
-
-		System.out.println(automato);
-		System.out.println(sentenca);
-		
 		List<Estado> estados = automato.getEstados();
 		boolean isEstadoFinal = false;
 		Estado estadoInicial = null;
 		// procura estado inicial e verifica se existe pelo menos um estado
 		// final
-
-		System.out.println(estados.size());
 
 		for (Estado e : estados) {
 
@@ -54,8 +48,6 @@ public class Controller {
 		if (isEstadoFinal && estadoInicial != null) {
 
 			Estado estadoAtual = estadoInicial;
-
-			System.out.println("INICIAL: " + estadoAtual + estadoAtual.getTransicoes().size());
 
 			int simbolosReconhecidos = 0; // contador de símbolos reconhecidos
 

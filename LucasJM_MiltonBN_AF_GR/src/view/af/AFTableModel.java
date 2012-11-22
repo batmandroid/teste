@@ -2,7 +2,6 @@ package view.af;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -21,7 +20,7 @@ public class AFTableModel extends AbstractTableModel {
 		colunas.add("Q");
 	}
 
-	public void addColunas(Set<String> colunas){
+	public void addColunas(List<String> colunas){
 		this.colunas.clear();
 		this.colunas.add("->");
 		this.colunas.add("*");
