@@ -59,9 +59,10 @@ public class GRTableModel extends AbstractTableModel {
 		return getValueAt(0, columnIndex).getClass();
 	}
 
-	public void setValueAt(String value, int row, int col) {
+	@Override
+	public void setValueAt(Object value, int row, int col) {
 		List<String> lin = itens.get(row);
-		lin.set(col, value);
+		lin.set(col, (String)value);
 		fireTableCellUpdated(row, col);
 	}
 

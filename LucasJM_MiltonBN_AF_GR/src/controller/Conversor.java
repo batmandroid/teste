@@ -3,6 +3,8 @@ package controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import util.NaoTerminaisConstantes;
+
 import model.Automato;
 import model.Estado;
 import model.GramaticaRegular;
@@ -14,6 +16,8 @@ public class Conversor {
 
 		GramaticaRegular gr = new GramaticaRegular();
 
+		converteParaNomesDeGramatica(automato);
+		
 		List<Estado> estados = automato.getEstados();
 		Estado inicial = automato.getEstadoInicial();
 		estados.remove(inicial);
@@ -40,7 +44,7 @@ public class Conversor {
 			}
 
 			if (estado.isEstFinal()) {
-				estadosDemais.add("$");
+				estadosDemais.add("&");
 			}
 
 			todosEstados.add(estadosDemais);
@@ -111,16 +115,33 @@ public class Conversor {
 			}
 		}
 
-		arrumaNomes(estados);
+		converteParaNomesDeAutomato(estados);
 		
 		automato.setEstados(estados);
 		
-		System.out.println(automato);
-
 		return automato;
 	}
+	
+	private void converteParaNomesDeGramatica(Automato e) {
+		
+		Estado estadoPai = e.getEstadoInicial();
+		estadoPai.setNome(NaoTerminaisConstantes.SIMBOLO_INICIAL);
+		
+		List<Estado> estados = new ArrayList<Estado>(e.getEstados());
+		estados.remove(estadoPai);
+		
+		NaoTerminaisConstantes constantes = new NaoTerminaisConstantes();
+		
+		List<String> nomes = new ArrayList<String>();
+		nomes.addAll(constantes.getListaNaoTerminais());
+		
+		for (int i = 0; i < estados.size(); i++) {
+			estados.get(i).setNome(nomes.get(i));
+		}
+		
+	}
 
-	private void arrumaNomes(List<Estado> estados) {
+	private void converteParaNomesDeAutomato(List<Estado> estados) {
 		for (int i = 0; i < estados.size(); i++) {
 			estados.get(i).setNome("q"+i);
 		}
@@ -157,7 +178,7 @@ public class Conversor {
 	private List<Estado> generateEstados(List<String> strs) {
 
 		List<String> strEstados = new ArrayList<String>(strs);
-		List<Estado> estados = new ArrayList<>();
+		List<Estado> estados = new ArrayList<Estado>();
 		String strInicial = strEstados.get(0);
 		strEstados.remove(strInicial);
 
