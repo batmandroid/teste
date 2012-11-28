@@ -74,30 +74,36 @@ public class Minimizador {
 		return mortos;
 	}
 
-	private Automato removeEstadosEsquivalentes(Automato e) {
+	private Automato removeEstadosEquivalentes(Automato e) {
 		
-		ClassesDeEquivalencia classesDeEquivalencia = new ClassesDeEquivalencia(e);
+		Automato x = e;
+		
+		try {
+			ClassesDeEquivalencia classesDeEquivalencia = new ClassesDeEquivalencia(e);
 
-		List<List<Estado>> classes = classesDeEquivalencia.separarClasses();
+			List<List<Estado>> classes = classesDeEquivalencia.separarClasses();
 
-		for (List<Estado> lista : classes) {
+			for (List<Estado> lista : classes) {
 
-			if (lista.size() > 1) {
+				if (lista.size() > 1) {
 
-				for (int i = 0; i < lista.size(); i++) {
+					for (int i = 0; i < lista.size(); i++) {
 
-					if (i != 0) {
-						int index = getIndiceEstado(lista.get(i).getNome(), e);
-						renomearTransacoes(lista.get(i), lista.get(0), e);
-						e.getEstados().remove(index);
-						lista.remove(i);
+						if (i != 0) {
+							int index = getIndiceEstado(lista.get(i).getNome(), e);
+							renomearTransacoes(lista.get(i), lista.get(0), e);
+							e.getEstados().remove(index);
+							lista.remove(i);
+						}
 					}
-				}
 
+				}
 			}
+		} catch (Exception e1) {
+			return x;
 		}
 		
-		return e;
+		return x;
 	}
 	
 	public void renomearTransacoes(Estado antigo, Estado novo, Automato automato ) {
@@ -172,10 +178,10 @@ public class Minimizador {
 		
 		Automato naoInalcancaveis = removeInalcancaveis(automato);
 		Automato naoMortos = removeEstadosMortos(naoInalcancaveis);
-	//	Automato naoEquivalentes = removeEstadosEsquivalentes(naoMortos);
+		Automato naoEquivalentes = removeEstadosEquivalentes(naoMortos);
 		
-		List<Estado> ests = naoMortos.getEstados();
-		Estado inicial = naoMortos.getEstadoInicial();
+		List<Estado> ests = naoEquivalentes.getEstados();
+		Estado inicial = naoEquivalentes.getEstadoInicial();
 		
 		ests.remove(inicial);
 		ests.add(0, inicial);
