@@ -1,7 +1,9 @@
 package controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import model.Automato;
 import model.Estado;
@@ -9,6 +11,8 @@ import model.Transicao;
 
 public class ValidadorSentenca {
 
+	private Set<String> sentencasGeradas;
+	
 	public boolean validaSentenca(Automato automato, List<Character> sentenca){
 		List<Estado> estados = automato.getEstados();
 		boolean isEstadoFinal = false;
@@ -58,19 +62,45 @@ public class ValidadorSentenca {
 	}
 	
 	public List<String> enumerarSentencas(int lim, Automato automato){
+		sentencasGeradas = new HashSet<String>();
+		Estado inicial = automato.getEstadoInicial();
 		
-		char [] letras = {'a','b','c'};  
-		  
-		for( int i = 0 ; i < letras.length ; i++ ){  
-		   for( int j = 0 ; j < letras.length ; j++ ){  
-		      for( int k = 0 ; k < letras.length ; k++ ){  
-		          System.out.println("" + letras[i] + letras[j] + letras[k] );  
-		      }  
-		   }  
-		}  
+		List<Transicao> transicoesIniciais = new ArrayList<Transicao>(inicial.getTransicoes());
 		
-		return new ArrayList<String>();
+		List<String> sentencasValidas = new ArrayList<String>();
+		
+		for (Transicao tri : transicoesIniciais) {
+			
+			String x = tri.getSimbolo().toString();
+			
+			Estado estado = tri.getEstadoDestino();
+				
+			percorreEstado(estado, x, x.length(), lim);
+			
+			sentencasGeradas.add(x);
+		}
+		
+		for (String sentenca : sentencasGeradas) {
+			List<Character> itensSentenca = new ArrayList<Character>();
+			for (int i = 0; i < sentenca.length(); i++) {
+				itensSentenca.add(sentenca.charAt(i));
+			}
+			if(validaSentenca(automato, itensSentenca)){
+				sentencasValidas.add(sentenca);
+			}
+		}
+		
+		return sentencasValidas;
 	}
-	
+
+	public void percorreEstado(Estado estado, String sentenca, int nivel, int limite){
+		if(nivel == limite){
+			return;
+		}
+		for (Transicao transicao : estado.getTransicoes()) {
+			sentencasGeradas.add(sentenca + transicao.getSimbolo());
+			percorreEstado(transicao.getEstadoDestino(), sentenca + transicao.getSimbolo(), nivel + 1, limite);
+		}
+	}
 
 }

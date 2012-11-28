@@ -262,10 +262,31 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		} else if (e.getSource() == fecharBtn) {
 			mainView.removePanel(this);
 		} else if (e.getSource() == enumerarItem) {
-			if (enumerarText.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(null, "Preencha o campo enumeração para executar essa ação!");
-			} else {
-				//TODO enumerar
+			enumerarAutomato();
+		}
+	}
+
+	private void enumerarAutomato() {
+		if (enumerarText.getText().trim().equals("")) {
+			JOptionPane.showMessageDialog(null, "Preencha o campo enumeração para executar essa ação!");
+		} else {
+			Automato automato = geraAutomatoDaTabela();
+			if(automato.isAutomatoDeterministico()){
+			String value = "";
+			List<String> sentencas = controller.enumeraSentencas(geraAutomatoDaTabela(), Integer.parseInt(enumerarText.getText()));
+			for (int i = 0; i < sentencas.size(); i++) {
+				if(i == 0){
+					value = sentencas.get(i);
+				} else{
+					value = value + " - " + sentencas.get(i);
+				}
+				if(i != 1 && i % 5 == 0){
+					value = value + "\n";
+				}
+			}
+			JOptionPane.showMessageDialog(null, value, "Sentenças válidas com limite " + enumerarText.getText(), JOptionPane.INFORMATION_MESSAGE);
+			} else{
+				JOptionPane.showMessageDialog(null, "Por favor, determinize o automato antes!", "Validação", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -276,12 +297,20 @@ public class AFPanel extends JPanel implements ActionListener, TableModelListene
 		for (int i = 0; i < sentenca.length(); i++) {
 			itensSentenca.add(sentenca.charAt(i));
 		}
-		boolean reconhecida = controller.validaSentenca(geraAutomatoDaTabela(), itensSentenca);
-		if (reconhecida) {
-			JOptionPane.showMessageDialog(null, "Sentença válida", "Validação", JOptionPane.INFORMATION_MESSAGE);
+		
+		Automato automato = geraAutomatoDaTabela();
+		
+		if (automato.isAutomatoDeterministico()) {
+			boolean reconhecida = controller.validaSentenca(geraAutomatoDaTabela(), itensSentenca);
+			if (reconhecida) {
+				JOptionPane.showMessageDialog(null, "Sentença válida", "Validação", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(null, "Sentença não válida", "Validação", JOptionPane.ERROR_MESSAGE);
+			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Sentença não válida", "Validação", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Por favor, determinize o automato antes!", "Validação", JOptionPane.ERROR_MESSAGE);
 		}
+
 	}
 
 	private boolean validaTabela() {

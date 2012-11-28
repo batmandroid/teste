@@ -34,6 +34,10 @@ public class Controller {
 	public boolean validaSentenca(Automato automato, List<Character> sentenca) {
 		return new ValidadorSentenca().validaSentenca(automato, sentenca);
 	}
+	
+	public List<String> enumeraSentencas(Automato automato, int limite) {
+		return new ValidadorSentenca().enumerarSentencas(limite, automato);
+	}
 
 	public Persistencia getPersistencia() {
 		return persistencia;

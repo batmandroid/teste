@@ -160,5 +160,14 @@ public class Automato implements Serializable {
 		}
 		return list;
 	}
+	
+	public boolean isAutomatoDeterministico() {
+		for (Estado estado : estados) {
+			if (estado.isNaoDeterminismo()) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }
