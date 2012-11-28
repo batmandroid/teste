@@ -174,6 +174,12 @@ public class Minimizador {
 		Automato naoMortos = removeEstadosMortos(naoInalcancaveis);
 	//	Automato naoEquivalentes = removeEstadosEsquivalentes(naoMortos);
 		
+		List<Estado> ests = naoMortos.getEstados();
+		Estado inicial = naoMortos.getEstadoInicial();
+		
+		ests.remove(inicial);
+		ests.add(0, inicial);
+		
 		return naoMortos;
 	}
 	

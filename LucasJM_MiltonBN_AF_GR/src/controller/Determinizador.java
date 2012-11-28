@@ -57,6 +57,12 @@ public class Determinizador {
 		}
 
 		determinizado.setEstados(estadosGerados);
+		
+		List<Estado> ests = determinizado.getEstados();
+		Estado inicial = determinizado.getEstadoInicial();
+		
+		ests.remove(inicial);
+		ests.add(0, inicial);
 
 		return determinizado;
 	}

@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import model.Automato;
@@ -14,7 +15,6 @@ public class ValidadorSentenca {
 		Estado estadoInicial = null;
 		// procura estado inicial e verifica se existe pelo menos um estado
 		// final
-
 		for (Estado e : estados) {
 
 			if (e.isEstFinal()) {
@@ -37,7 +37,6 @@ public class ValidadorSentenca {
 				// boolean achou = false;
 				// percorre cada transição
 				for (Transicao t : estadoAtual.getTransicoes()) {
-					System.out.println(estadoAtual.getNome() + " " + estadoAtual.getTransicoes().size());
 					// se um dos símbolos da transição for igual ao caracter
 					// atual
 					if (t.getSimbolo().equals(Character.valueOf(s))) {
@@ -57,5 +56,21 @@ public class ValidadorSentenca {
 		}
 		return false;
 	}
+	
+	public List<String> enumerarSentencas(int lim, Automato automato){
+		
+		char [] letras = {'a','b','c'};  
+		  
+		for( int i = 0 ; i < letras.length ; i++ ){  
+		   for( int j = 0 ; j < letras.length ; j++ ){  
+		      for( int k = 0 ; k < letras.length ; k++ ){  
+		          System.out.println("" + letras[i] + letras[j] + letras[k] );  
+		      }  
+		   }  
+		}  
+		
+		return new ArrayList<String>();
+	}
+	
 
 }
